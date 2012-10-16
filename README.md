@@ -5,7 +5,7 @@ Moo-Knob
 
 Provides a rotary knob control for Mootools
 
-![Screenshot]()
+![Screenshot](https://raw.github.com/leegee/Mootools-Knob/master/Docs/screenshot.png)
 
 How to use
 ----------
