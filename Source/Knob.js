@@ -12,6 +12,7 @@ requires:
 
 provides: [Knob]
 
+...
 */
 
 /*
@@ -52,6 +53,7 @@ var Knob = new Class({
 	initialValue:	null,	/* Cache of 'value', prior to drag starts */
 	finalValue:		null,	/* When drag ends and is not canceled */
 	dragging:		false,	/* Flag */
+	range:			null,	/* For rendering */
 	
 	initialize: function( options, actx ){
 		var self = this;
@@ -67,11 +69,18 @@ var Knob = new Class({
 			
 		this.value = this.options.value;
 		this.element.store('self', this);
+
+		this.range = self.options.range[0] * -1
+			+ Math.abs( self.options.range[1] );
+
 		this.attach();
+		this.render(); // dispay initial value1
 	},
 
 	attach: function(){
 		this.element.addEvent('mousedown', this.mousedown);
+		// this.element.addEvent('focus', this.focus);
+		// this.element.addEvent('blur', this.blur);
 	},
 
 	destroy: function(){ this.detach() },
@@ -80,8 +89,11 @@ var Knob = new Class({
 		this.element.removeEvent('mousedown', this.mousedown);
 		if (this.dragging) 
 			window.removeEvent('mouseup', __ActiveMooToolsKnobCtrl__.mouseup);
-		if (__ActiveMooToolsKnobCtrl__) 
+		if (__ActiveMooToolsKnobCtrl__){
+		// 	__ActiveMooToolsKnobCtrl__.element.removeEvent('focus',__ActiveMooToolsKnobCtrl__.focus);
+		// 	__ActiveMooToolsKnobCtrl__.element.removeEvent('blur', __ActiveMooToolsKnobCtrl__.blur);
 			window.removeEvent('mousemove', __ActiveMooToolsKnobCtrl__.mousemove);
+		}
 	},
 	
 	mousedown: function(e){
@@ -131,10 +143,13 @@ var Knob = new Class({
     	
 		self.x = e.page.x - self.anchor.x;
 		self.y = e.page.y - self.anchor.y;
-        // var d = Math.sqrt(  Math.pow(self.anchor.x + x, 2)  + Math.pow(self.anchor.y + y, 2)  );
+        
+		// var d = Math.sqrt(  Math.pow(self.anchor.x + self.x, 2)  + Math.pow(self.anchor.y + self.y, 2)  );
 		
 		self.movement = (Math.abs(self.x) > Math.abs(self.y)? self.x : self.y);
 		self.value    = self.initialValue + ( self.movement * self.options.scale);
+
+		// console.debug( self.movement +' -> '+ self.value );
 		
 		if (self.options.range){
 			if (self.value < self.options.range[0]) self.value = self.options.range[0];
@@ -143,24 +158,32 @@ var Knob = new Class({
 		
 		if (self.element.get('value')) self.element.set('value', self.value);
 		
-		self.degrees = self.value;
-		
-		var range = self.options.range[0] * -1
-			+ Math.abs( self.options.range[1] );
-		self.degrees = self.value * (360 / range);
-
-		self.fireEvent('tick');
-		self.element.setStyles({ 
-			'transform': 'rotate('+self.degrees+'deg)',
-			'-ms-transform': 'rotate('+self.degrees+'deg)',
-			'-webkit-transform': 'rotate('+self.degrees+'deg)',
-			'-o-transform': 'rotate('+self.degrees+'deg)',
-			'-moz-transform': 'rotate('+self.degrees+'deg)',
+		self.render();
+	},
+	
+	render: function(){
+		this.degrees = this.value * (360 / this.range);
+		this.element.set('aria-valuenow', this.value);
+		this.element.set('aria-valuetext', this.value);
+		this.fireEvent('tick');
+		this.element.setStyles({ 
+			'transform': 'rotate('+this.degrees+'deg)',
+			'-ms-transform': 'rotate('+this.degrees+'deg)',
+			'-webkit-transform': 'rotate('+this.degrees+'deg)',
+			'-o-transform': 'rotate('+this.degrees+'deg)',
+			'-moz-transform': 'rotate('+this.degrees+'deg)',
 		});
 	}
 });
 
-
+/*
+	The range of a widget defaults to +/-100,
+	but can be set with the aria-valuemin and aria-valuemax attributes 
+	of the element. The initial value can be set via the value attribute
+	or data-value attribute. The chosen value of the control will be placed
+	in the aria-valuenow and aria-valuetext attributes, and in the value
+	attribute, if present, otherwise in the data-value attribute.
+*/
 Knob.parseDOM = function( selector ){
 	selector = selector || '.mooknob';
 	$$(selector).each( function(el){
@@ -171,8 +194,19 @@ Knob.parseDOM = function( selector ){
 			opts[i] = eval( el.dataset[i] );
 		});
 		
-		if (el.get('value')) 
-			opts.value = el.get('value') || el.dataset.value || 0;
+		var min = el.get('aria-valuemin') || null;
+		var max = el.get('aria-valuemax') || null;
+		if (min || max){
+			if (min && !max)
+				throw('aria-valuemin without aria-valuemax: default range will be used');
+			else if (max && !min) 
+				throw('aria-valuemax without aria-valuemin: default range will be used');
+			else 
+				opts.range = [min,max];
+		}
+		
+		opts.value = el.get('value') || el.dataset.value || 0;
+		
 		new Knob(opts);
 	});
 }	
