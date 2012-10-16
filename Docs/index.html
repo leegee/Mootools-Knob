@@ -1,0 +1,99 @@
+<html lang='en'>
+<head>
+	<title>MooTools Knob</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta charset="utf-8">
+	
+	<meta name="author" content="Lee Goddard (http://www.leegoddard.net/)" />
+	<meta name="copyright" content="Copyright (c) 2011 Lee Goddard" />
+	<meta name="description" content="A rotary knob control for MooTools"/>
+	<meta name="keywords" content="knob, rotary, ui, mootools, javascript"/>
+
+    	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/mootools/1.4/mootools-yui-compressed.js"></script>
+
+	<script type="text/javascript" src="../Source/Knob.js"></script>
+ 
+	<script type="text/javascript">
+	window.addEvent('domready', function() {
+		var valueDisplaly = $('knob-js-value');
+		var knob = new Knob({
+			element: 'knob-js',
+			onTick: function(){
+				valueDisplaly.set('text', this.value );			
+			}
+		});
+	});
+	</script>
+	
+    	</head>
+    	<body>
+	<header><h1>MooTools Knob</h1></header>
+	
+	<section>
+		<h2>An HTML knob with a range of +/-180</h2>
+		<xmp>
+	<span id='knob-html'
+		class='mooknob'
+		data-range='[-180,180]'
+		data-value='0'
+		style='background:#ddd; margin-left:200px;font-size:32pt' 
+	>↑</span>		
+		</xmp>
+		<p>The result:
+			<span id='knob-html'
+			data-range='[-180,180]'
+			data-value='0'
+			style='background:#ddd; margin-left:200px;font-size:32pt' class='mooknob'>↑</span>
+		</p>
+	</section>
+	
+	<section>
+	<h2>JavaScript API</h2>
+	<p>
+		A knob controlled by JavaScript, with a callback to
+		update the value display, and a default range of +/-100:
+	</p>
+
+<xmp>
+	<script type="text/javascript">
+	window.addEvent('domready', function() {
+		var valueDisplaly = $('knob-js-value');
+		var knob = new Knob({
+			element: 'knob-js',
+			onTick: function(){
+				valueDisplaly.set('text', this.value );			
+			}
+		});
+	});
+	</script>
+	
+	<span id='knob-js'>↑</span>
+	&mdash; value <span id='knob-js-value'>0</span>
+</xmp>
+	
+	<p>The result:
+		<span id='knob-js'
+		style='margin-left:200px;background:#ddd; font-size:32pt'>↑</span>
+		&mdash; value <span id='knob-js-value'>0</span>
+	</p>
+	</section>
+	
+	<section>
+		<h2>Inline Graphics</h2>
+		<p>Default values, with quick graphics:</p>
+		<xmp>
+		<div style='position:absolute'>
+			<span id='bg' style='position:absolute;top:0;background:url(knob_bg_164x165.png); width:164px; height:165px'></span>
+			<span class='mooknob' id='fg' style='position:absolute;top:0;left:0;background:url(knob_fg_164x165.png); width:164px; height:165px'></span>
+		</div>
+		</xmp>
+		<p style='position:absolute'>
+		Result:
+			<span id='bg' style='position:absolute;top:0;left:200px;background:url(knob_bg_164x165.png); width:164px; height:165px'></span>
+			<span class='mooknob' id='fg' style='position:absolute;top:0;left:200px;background:url(knob_fg_164x165.png); width:164px; height:165px'></span>
+		</div>
+	</section>	
+	
+    	</body>
+</html>
+	

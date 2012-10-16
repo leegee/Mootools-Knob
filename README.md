@@ -1,4 +1,13 @@
 Mootools-Knob
 =============
+Moo-Knob
+========
 
-A rotary knob control for Mootools
+Provides a rotary knob control for Mootools
+
+![Screenshot]()
+
+How to use
+----------
+
+Please see Docs/index.html for a working example
