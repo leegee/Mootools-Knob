@@ -61,7 +61,8 @@ var Knob = new Class({
 			document.id(this.options.element) 
 			: this.element = this.options.element;
 			
-		if (this.element.getStyle('display')=='inline')
+		var block = this.element.getStyle('display');
+		if (block=='inline' || block=='')
 			this.element.setStyle('display', 'inline-block'); 
 			
 		this.value = this.options.value;
@@ -143,6 +144,11 @@ var Knob = new Class({
 		if (self.element.get('value')) self.element.set('value', self.value);
 		
 		self.degrees = self.value;
+		
+		var range = self.options.range[0] * -1
+			+ Math.abs( self.options.range[1] );
+		self.degrees = self.value * (360 / range);
+
 		self.fireEvent('tick');
 		self.element.setStyles({ 
 			'transform': 'rotate('+self.degrees+'deg)',

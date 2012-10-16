@@ -8,4 +8,7 @@ Provides a rotary knob control for Mootools
 How to use
 ----------
 
-Please see Docs/index.html for a working example
+Until docs are written, please see Docs/index.html for a working example
+
+The source code is documented.
+
