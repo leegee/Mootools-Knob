@@ -55,17 +55,17 @@ The equivalent to the above HTML would be:
 	
 The following events are supplied:
 
-	* **onMousedown**: fired when the knob is clicked
-	* **onMouseup**: fired when the knob is released but before it is rendered
-	* **	onTick**: fired as the knob is turned
+* **onMousedown**: fired when the knob is clicked
+* **onMouseup**: fired when the knob is released but before it is rendered
+* **	onTick**: fired as the knob is turned
 
 The **onTick** event is intended to allow the user to adjust the behaviour 
 of the widget, using the following object fields:
 
-	* **x** and **y** represent the position of the mouse curosr relative to the knob
-	* **movement**  contains the greater of these two, 
-	* **value** contains the previous value incremented by **movement** multiplied by the value of the **scale** option (*this.options.scale*).
-	* **degrees** contains the amount by which the knob will be rotated, and can be set in accordance with the values accepted by the CSS3 Transform/rotate property (0-360, afik)
+* **x** and **y** represent the position of the mouse curosr relative to the knob
+* **movement**  contains the greater of these two, 
+* **value** contains the previous value incremented by **movement** multiplied by the value of the **scale** option (*this.options.scale*).
+* **degrees** contains the amount by which the knob will be rotated, and can be set in accordance with the values accepted by the CSS3 Transform/rotate property (0-360, afik)
 	
 The **onTick** event could just be used to update a text display field.
 
