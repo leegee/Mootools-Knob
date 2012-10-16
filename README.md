@@ -16,6 +16,30 @@ A *Knob* object can be instantiated with a variety of options,
 and the library also parses the DOM for elements with class *.mooknob*,
 replacing each with an instance of the Knob control.
 
+CSS
+---
+
+As seems to be usual for MooTools, no CSS is supplied. However,
+the Docs/index.html page contains some examples. A basic gray
+and round knob can be achieved without graphics if you client
+supports the *border-radius* property of CSS3:
+
+	<style>
+	.rotary {
+		border: 1px solid black;
+		background: silver;
+		text-align: center;
+		border-radius: 50%;
+		font-weight: bold;
+		font-size:28pt;
+		width: 32pt;
+		height: 32pt;
+	}
+	</style>	
+
+If you place in your knob-to-be element a UTF-8 up-arrow of some kind, 
+it looks passable.
+
 Use in HTML, without Javascript
 -------------------------------
 
@@ -69,4 +93,4 @@ of the widget, using the following object fields:
 	
 The **onTick** event could just be used to update a text display field.
 
-	
+
