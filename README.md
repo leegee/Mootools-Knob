@@ -1,7 +1,5 @@
 Mootools-Knob
 =============
-Moo-Knob
-========
 
 Provides a rotary knob control for Mootools
 
