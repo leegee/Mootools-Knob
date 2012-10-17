@@ -255,13 +255,6 @@ var Knob = new Class({
 
 		// console.debug( self.movement +' -> '+ self.value );
 		
-		if (self.options.range){
-			if (self.value < self.options.range[0]) self.value = self.options.range[0];
-			else if (self.value > self.options.range[1]) self.value = self.options.range[1];
-		}
-		
-		if (self.element.get('value')) self.element.set('value', self.value);
-		
 		self.render();
 	},
 	
@@ -272,6 +265,14 @@ var Knob = new Class({
 	*/
 	render: function(v){
 		if (typeof v != 'undefined') this.value = v;
+
+		if (this.options.range){
+			if (this.value < this.options.range[0]) this.value = this.options.range[0];
+			else if (this.value > this.options.range[1]) this.value = this.options.range[1];
+		}
+		
+		if (this.element.get('value')) this.element.set('value', this.value);
+
 		this.degrees = this.value * (360 / this.range);
 		this.element.set('aria-valuenow', this.value);
 		this.element.set('aria-valuetext', this.value);
