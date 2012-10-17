@@ -116,7 +116,7 @@ The following options are available. Some may be supplied as
 * **monitorMs**: (*250*) The interval, in milliseconds, at which to check the **monitor** element, if supplied. The monitor element's *value* (an aria-related) attribute will also be updated with changes to the control.
 * **addpointer**: (*↑*) By default the module (since 0.3) replaces **element**'s content with  an up-arrow to the element. Disable this by setting this option to null or false.
 
-EVENTS
+Evebts
 ------
 
 In addition to the above options, the following events are supplied:
@@ -135,7 +135,7 @@ of the widget, using the following object fields:
 	
 The **onTick** event could just be used to update a text display field.
 
-PUBLIC METHODS
+Public Methods
 --------------
 
 * **render**: Update the control to reflect the current state of the **value** field, which may be set by supply a single, numeric argument
