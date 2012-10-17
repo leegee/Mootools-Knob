@@ -302,7 +302,19 @@ Knob.parseDOM = function( selector ){
 			element:	 el,
 		};
 		Object.keys(el.dataset).each( function(i){
-			opts[i] = eval( el.dataset[i] );
+			try { // rough casting
+				opts[i] = eval( el.dataset[i] )
+			}
+			catch(e) {
+				// String literals
+				if (e.toString().match(/ReferenceError/)){
+					opts[i] = el.dataset[i];
+				} 
+				else {
+					console.log('Error setting '+i+' from dataset');
+					console.info(e);
+				}
+			}
 		});
 		
 		var min = el.get('aria-valuemin') || null;
@@ -315,7 +327,6 @@ Knob.parseDOM = function( selector ){
 			else 
 				opts.range = [min,max];
 		}
-		
 		opts.value = el.get('value') || el.dataset.value || 0;
 		
 		new Knob(opts);
