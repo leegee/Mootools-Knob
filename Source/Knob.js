@@ -80,9 +80,10 @@ var Knob = new Class({
 
 		var wrapperStyle = this.options.wrappernostyle?
 			{} :	{
-				'text-decoration' : 'none',
-				'padding' : 0,
-				'margin'  : 0
+				textDecoration: 'none',
+				padding: 0,
+				margin: 0,
+				color: 'inherit'
 			};
 		
 		this.wrapper = new Element('a', {
