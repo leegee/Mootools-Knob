@@ -94,6 +94,8 @@ The following options are available. Some may be supplied as
 * **wrappernostyle**: (*false*) By default, the anchor that wraps the knob, to allow keyboard focus, has CSS styles alter (no text-decoration, border or padding). This can be prevented though this attribute.
 * **keychangeby**: (*1*) When arrow keys control the knob, the **value** field is increased by this factor
 * **keychangebywithshift**: (*10*) As **keychangeby**, above, but for when shift, alt, or meta key is also pressed 
+* **monitor**: A name for, or instance of, a DOM element that has a **value** field that shoudl be monitored for changes, to be reflected by this control. Intended for text input elements.
+* **monitorMs**: (*250*) The interval, in milliseconds, at which to check the **monitor** element, if supplied.
 
 EVENTS
 ------
@@ -113,4 +115,11 @@ of the widget, using the following object fields:
 * **degrees** contains the amount by which the knob will be rotated, and can be set in accordance with the values accepted by the CSS3 Transform/rotate property (0-360, afik)
 	
 The **onTick** event could just be used to update a text display field.
+
+PUBLIC METHODS
+--------------
+
+* **render**: Update the control to reflect the current state of the **value** field, which may be set by supply a single, numeric argument
+* **attach**: Called at instantiation to attach eveents to allow the control to operate
+* **detach**: Removes events
 

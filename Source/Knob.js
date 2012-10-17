@@ -45,12 +45,18 @@ var Knob = new Class({
 		keychangeby:				1, 	/* When arrow keys control knob, incrase knob value by this */
 		keychangebywithshift: 10, /* As keyUnit but for when shift key is also pressed */
 		
+		monitor:		null, /* May be a string or DOM element to monitor: changes in this elements *value* attribute will change the control's *value* attribute, and cause the control to be re-rendered. */
+		monitorMs:	1000/4, /* Frequency of checking for monitor.value changes */
+		
 		onTick:			function(){},
 		onMousedown: 	function(){},
 		onMouseUp:		function(){}
 	},
 
 	element:			null,
+	monitor:			null,	/* See options.monitor */
+	monitorOldValue: null,
+	monitorTimer:	null,	/* setInterval timer for checking monitor.value */
 	wrapper:			null,	/* Anchor element that wraps element to allow focus */
 	movement:		null,	/* The Euclidean distance of dragged cursor from origin in element  */
 	anchor:			null,	/* Position of element at knob mouse down */
@@ -68,6 +74,10 @@ var Knob = new Class({
 			document.id(this.options.element) 
 			: this.element = this.options.element;
 		
+		this.monitor = (typeof this.options.monitor == 'string')?
+			document.id(this.options.monitor) 
+			: this.monitor = this.options.monitor;
+
 		var wrapperStyle = this.options.wrappernostyle?
 			{} :	{
 				'text-decoration' : 'none',
@@ -103,11 +113,25 @@ var Knob = new Class({
 
 	attach: function(){
 		this.element.addEvent('mousedown', this.mousedown);
+		this.monitor.addEvent('change', this.monitorValueChange);
+		this.monitorTimer = this.monitorValueChange.periodical(
+			this.options.monitorMs, this
+		);
+	},
+	
+	/* Monitor changes in the .monitor field's value, and update control */
+	monitorValueChange: function(e){
+		var v = this.monitor.get('value');
+		if (v != this.monitorOldValue){
+			this.value = v;
+			this.render();
+		}
 	},
 
 	destroy: function(){ this.detach() },
 	
 	detach: function(){
+		if (this.monitorTimer) clearInterval( this.monitorTimer );
 		this.element.removeEvent('mousedown', this.mousedown);
 		if (this.dragging) 
 			window.removeEvent('mouseup', __ActiveMooToolsKnobCtrl__.mouseup);
@@ -235,9 +259,11 @@ var Knob = new Class({
 	
 	/* Rotates the control knob.
 		Requires this.value to be set.
-		Sets this.degrees, and element's aria-valuenow/-valuetext
+		Sets this.degrees, and element's aria-valuenow/-valuetext.
+		If a parameter is supplied, it sets this.value
 	*/
-	render: function(){
+	render: function(v){
+		if (typeof v != 'undefined') this.value = v;
 		this.degrees = this.value * (360 / this.range);
 		this.element.set('aria-valuenow', this.value);
 		this.element.set('aria-valuetext', this.value);
