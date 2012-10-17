@@ -26,15 +26,28 @@
 	</script>
 	
 	<style>
-	.rotary {
+	.rotary,
+	.rotary2 {
 		border: 1px solid black;
 		background: silver;
 		text-align: center;
 		border-radius: 50%;
 		font-weight: bold;
-		font-size:28pt;
-		width: 32pt;
-		height: 32pt;
+		font-size:42pt;
+		line-height: 42pt;
+		width: 42pt;
+		height: 42pt;
+	}
+	
+	.rotary2 {
+		background: gold;
+		border: 2px solid gray;
+		background-image: -moz-radial-gradient(12pt 12pt 45deg, circle cover, yellow 0%, orange 100%, red 95%);
+		background-image: -webkit-radial-gradient(12pt 12pt, circle cover, yellow, orange);
+		background-image: radial-gradient(12pt 12pt 45deg, circle cover, yellow 0%, orange 100%, red 95%);
+		-moz-box-shadow:    3pt 3pt 5pt 3pt #ccc;
+		-webkit-box-shadow: 3pt 3pt 5pt 6pt #ccc;
+		box-shadow:         4pt 2pt 3pt 1pt rgba(44,44,44,.5);		
 	}
 	</style>	
     	</head>
@@ -152,13 +165,13 @@
 	<section>
 		<h2>As previous, but without JavaScript, plus two-way interation with input field</h2>
 		<xmp>
-		<span id='knob-jsX' class='mooknob' data-monitor='knob-jsX-value'></span>
+		<span id='knob-jsX' class='mooknob rotary2' data-monitor='knob-jsX-value'></span>
 		&mdash; value <span id='knob-jsX-value'></span>
 		</xmp>
 
 		<p>The result:
 			<span id='knob-js99'
-				class='mooknob rotary'
+				class='mooknob rotary2'
 				data-monitor='knob-js99-value'
 				style='margin-left:20px'></span>
 			&mdash; value <input type='text' value='12' id='knob-js99-value'></span>
