@@ -116,7 +116,7 @@ The following options are available. Some may be supplied as
 * **monitorMs**: (*250*) The interval, in milliseconds, at which to check the **monitor** element, if supplied. The monitor element's *value* (an aria-related) attribute will also be updated with changes to the control.
 * **addpointer**: (*↑*) By default the module (since 0.3) replaces **element**'s content with  an up-arrow to the element. Disable this by setting this option to null or false.
 
-Evebts
+Events
 ------
 
 In addition to the above options, the following events are supplied:
