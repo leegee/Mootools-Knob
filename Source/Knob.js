@@ -78,12 +78,14 @@ var Knob = new Class({
 			this.element.set('text', this.options.addpointer );
 		}
 		
-		if (this.monitor){
+		if (this.options.monitor){
 			this.monitor = (typeof this.options.monitor == 'string')?
 				document.id(this.options.monitor) 
 				: this.monitor = this.options.monitor;
 		}
 	
+console.log('monitor el '+this.monitor.id+' value initially '+this.monitor.get('value') );
+
 		this.element.addEvents({
 			focus: this.focus,
 			blur: this.blur
@@ -93,7 +95,14 @@ var Knob = new Class({
 		if (block=='inline' || block=='')
 			this.element.setStyle('display', 'inline-block'); 
 			
-		this.value = this.options.value;
+		if (this.monitor && this.monitor.get('value')){
+			 this.value = this.monitor.value;
+		} else if (this.options.value != null){
+			this.value = this.options.value;
+		} else if (this.element.value){
+			this.value = this.element.value;
+		}
+		
 		this.element.store('self', this);
 
 		this.range = self.options.range[0] * -1
@@ -114,8 +123,9 @@ var Knob = new Class({
 	/* Monitor changes in the .monitor field's value, and update control */
 	monitorValueChange: function(e){
 		if ( this.monitor ){
-			var v = this.monitor.get('value');
+			var v = parseFloat( this.monitor.get('value') );
 			if (v != this.monitorOldValue){
+console.log('set v to '+v +' for '+this.monitor.id );
 				this.monitorOldValue = this.value = v;
 				this.render();
 			}
@@ -243,13 +253,6 @@ var Knob = new Class({
 		self.movement = (Math.abs(self.x) > Math.abs(self.y)? self.x : self.y);
 		self.value    = self.initialValue + ( self.movement * self.options.scale);
 
-		if ( self.monitor ){
-			self.monitor.set('value', self.value);
-			self.monitor.set('aria-valuenow', self.value);
-			self.monitor.set('aria-valuetext', self.value);
-			alert(1);
-		}
-		
 		self.render();
 	},
 	
@@ -267,6 +270,11 @@ var Knob = new Class({
 		}
 		
 		if (this.element.get('value')) this.element.set('value', this.value);
+		if ( this.monitor ){
+			this.monitor.set('value', this.value);
+			this.monitor.set('aria-valuenow', this.value);
+			this.monitor.set('aria-valuetext', this.value);
+		}
 
 		this.degrees = this.value * (360 / this.range);
 		this.element.set('aria-valuenow', this.value);

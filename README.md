@@ -29,6 +29,16 @@ increment and decrement the value - by 10 if if the shift key is
 depressed; if the alt, or meta keys are depressed, the value
 is set to its maximum or minimum.
 
+Monitoring
+----------
+
+A control can monitor and reflect values of another element's *value* fileld: such element should be supplied via the *monotpr* field, as described in 'Options', below.
+
+Initial Control Value
+---------------------
+
+The initial value of the control comes from either the *monitor* elements' value, or the *options.value*/the *data-value* attribute of the *element*, or from the element's *value* field, in that order.
+
 CSS
 ---
 
@@ -90,7 +100,7 @@ The equivalent to the above HTML would be:
 		value: 10
 	});
 	
-OPTIONS
+Options
 -------
 
 The following options are available. Some may be supplied as 
