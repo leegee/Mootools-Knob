@@ -41,8 +41,6 @@ var Knob = new Class({
 		addpointer:		'↑',		/* Default is an up-arrow (↑). If you set this to null, the up-arrow is not added to the knob element */
 		range:			[-100, 100], 	/* Minimum and maximum values */
 		scale:			1,		/* Multiplier applied to number of px moved, to acheive change in .value */
-		wrapperclass:		'mooknobouter', /* Class of el that wrape .element to allow focus */
-		wrappernostyle: 		false, /* Stops setting text-decoration, margin, padding to none */
 		keychangeby:				1, 	/* When arrow keys control knob, incrase knob value by this */
 		keychangebywithshift: 10, /* As keyUnit but for when shift key is also pressed */
 		
@@ -58,7 +56,6 @@ var Knob = new Class({
 	monitor:			null,	/* See options.monitor */
 	monitorOldValue: null,
 	monitorTimer:	null,	/* setInterval timer for checking monitor.value */
-	wrapper:			null,	/* Anchor element that wraps element to allow focus */
 	movement:		null,	/* The Euclidean distance of dragged cursor from origin in element  */
 	anchor:			null,	/* Position of element at knob mouse down */
 	value:			null,	/* Actual value of control */
@@ -74,41 +71,30 @@ var Knob = new Class({
 		this.element = (typeof this.options.element == 'string')?
 			document.id(this.options.element) 
 			: this.element = this.options.element;
-			
+		
+		this.element.setAttribute('tabIndex', this.element.getAttribute('tabIdex') || 0);
+
 		if (this.options.addpointer){
 			this.element.set('text', this.options.addpointer );
 		}
 		
-		this.monitor = (typeof this.options.monitor == 'string')?
-			document.id(this.options.monitor) 
-			: this.monitor = this.options.monitor;
-
-		var wrapperStyle = this.options.wrappernostyle?
-			{} :	{
-				textDecoration: 'none',
-				padding: 0,
-				margin: 0,
-				color: 'inherit'
-			};
-		
-		this.wrapper = new Element('a', {
-			href: 'javascript:void(0)',
-			'class': this.options.wrapperclass,
-			styles: wrapperStyle,
-			events: {
-				focus: this.focus,
-				blur:  this.blur
-			}
+		if (this.monitor){
+			this.monitor = (typeof this.options.monitor == 'string')?
+				document.id(this.options.monitor) 
+				: this.monitor = this.options.monitor;
+		}
+	
+		this.element.addEvents({
+			focus: this.focus,
+			blur: this.blur
 		});
-		this.wrapper.wraps( this.element );
-			
+
 		var block = this.element.getStyle('display');
 		if (block=='inline' || block=='')
 			this.element.setStyle('display', 'inline-block'); 
 			
 		this.value = this.options.value;
 		this.element.store('self', this);
-		this.wrapper.store('self', this);
 
 		this.range = self.options.range[0] * -1
 			+ Math.abs( self.options.range[1] );
@@ -130,7 +116,7 @@ var Knob = new Class({
 		if ( this.monitor ){
 			var v = this.monitor.get('value');
 			if (v != this.monitorOldValue){
-				this.value = v;
+				this.monitorOldValue = this.value = v;
 				this.render();
 			}
 		}
@@ -151,8 +137,11 @@ var Knob = new Class({
 	},
 	
 	focus: function(e){
-		var self = this.retrieve('self');
-		e.stop();
+		var self;
+		if (e) e.stop();
+		if (typeOf(this)=='element')
+			 self = this.retrieve('self');
+		else self = this;	
 		__ActiveMooToolsKnobCtrl__ = self;
 		window.addEvent('keydown', self.keydown);
 	},
@@ -160,8 +149,8 @@ var Knob = new Class({
 	blur: function(e){
 		var self = this.retrieve('self');
 		e.stop();
-		__ActiveMooToolsKnobCtrl__ = null;
 		window.removeEvent('keydown', self.keydown);
+		__ActiveMooToolsKnobCtrl__ = null;
 	},
 
 	/* When the control has focus, the arrow keys change the value
@@ -202,15 +191,17 @@ var Knob = new Class({
 
 	mousedown: function(e){
 		// Get element position here, not earlier, to allow for resizing:
-		var self = this.retrieve('self');
 		e.stop();
+		var self = this.retrieve('self');
+		__ActiveMooToolsKnobCtrl__ = self;
+		self.element.focus();
+		self.focus();		
 		self.anchor = this.getPosition();
 		self.initialValue = self.value;
 		window.addEvent('mousemove', self.mousemove );
 		// How to maintain lexical context?
 		window.addEvent('mouseup', self.mouseup );
 		self.dragging = true;
-		__ActiveMooToolsKnobCtrl__ = self;
 		self.fireEvent('mousedown');
 	},
 	
@@ -221,7 +212,6 @@ var Knob = new Class({
 		window.removeEvent('mouseup', self.mouseup);
 		self.dragging = false;
 		self.fireEvent('mouseup');
-		__ActiveMooToolsKnobCtrl__ = null;
 	},
 	
 	/* Sets the x, y field as the position of the mouse curosr relative to the knob,
@@ -253,7 +243,12 @@ var Knob = new Class({
 		self.movement = (Math.abs(self.x) > Math.abs(self.y)? self.x : self.y);
 		self.value    = self.initialValue + ( self.movement * self.options.scale);
 
-		// console.debug( self.movement +' -> '+ self.value );
+		if ( self.monitor ){
+			self.monitor.set('value', self.value);
+			self.monitor.set('aria-valuenow', self.value);
+			self.monitor.set('aria-valuetext', self.value);
+			alert(1);
+		}
 		
 		self.render();
 	},

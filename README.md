@@ -90,12 +90,10 @@ The following options are available. Some may be supplied as
 * **value**: (*0*) The iInitial value of the control. If not supplied, taken from attributes *value* or *data-value*
 * **range**: (*[-100, 100]*) The minimum and maximum values. May be supplied in HTML as *aria-valuemin* and *aria-valuemax*.
 * **scale**: (*1*) Multiplier applied to the number of pixels the mosue may be moved, to acheive change in the **value** field (see Events, below)
-* **wrapperclass**: (*mooknobouter*) CSS class of the anchor element that wraps the knob element (*element*, above), to allow the control to take keyboard focus.
-* **wrappernostyle**: (*false*) By default, the anchor that wraps the knob, to allow keyboard focus, has CSS styles alter (no text-decoration, border or padding). This can be prevented though this attribute.
 * **keychangeby**: (*1*) When arrow keys control the knob, the **value** field is increased by this factor
 * **keychangebywithshift**: (*10*) As **keychangeby**, above, but for when shift, alt, or meta key is also pressed 
 * **monitor**: A name for, or instance of, a DOM element that has a **value** field that shoudl be monitored for changes, to be reflected by this control. Intended for text input elements.
-* **monitorMs**: (*250*) The interval, in milliseconds, at which to check the **monitor** element, if supplied.
+* **monitorMs**: (*250*) The interval, in milliseconds, at which to check the **monitor** element, if supplied. The monitor element's *value* (an aria-related) attribute will also be updated with changes to the control.
 * **addpointer**: (*↑*) By default the module (since 0.3) replaces **element**'s content with  an up-arrow to the element. Disable this by setting this option to null or false.
 
 EVENTS
