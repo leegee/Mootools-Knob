@@ -113,7 +113,7 @@ var Knob = new Class({
 
 	attach: function(){
 		this.element.addEvent('mousedown', this.mousedown);
-		this.monitor.addEvent('change', this.monitorValueChange);
+		if (this.monitor) this.monitor.addEvent('change', this.monitorValueChange);
 		this.monitorTimer = this.monitorValueChange.periodical(
 			this.options.monitorMs, this
 		);
@@ -121,10 +121,12 @@ var Knob = new Class({
 	
 	/* Monitor changes in the .monitor field's value, and update control */
 	monitorValueChange: function(e){
-		var v = this.monitor.get('value');
-		if (v != this.monitorOldValue){
-			this.value = v;
-			this.render();
+		if ( this.monitor ){
+			var v = this.monitor.get('value');
+			if (v != this.monitorOldValue){
+				this.value = v;
+				this.render();
+			}
 		}
 	},
 
