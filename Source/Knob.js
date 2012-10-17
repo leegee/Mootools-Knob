@@ -84,8 +84,6 @@ var Knob = new Class({
 				: this.monitor = this.options.monitor;
 		}
 	
-console.log('monitor el '+this.monitor.id+' value initially '+this.monitor.get('value') );
-
 		this.element.addEvents({
 			focus: this.focus,
 			blur: this.blur
@@ -125,7 +123,6 @@ console.log('monitor el '+this.monitor.id+' value initially '+this.monitor.get('
 		if ( this.monitor ){
 			var v = parseFloat( this.monitor.get('value') );
 			if (v != this.monitorOldValue){
-console.log('set v to '+v +' for '+this.monitor.id );
 				this.monitorOldValue = this.value = v;
 				this.render();
 			}
