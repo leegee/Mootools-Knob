@@ -16,7 +16,7 @@ provides: [Knob]
 */
 
 /*
-	Version 0.1
+	Version 0.2 - WIA-ARIA and keyboard control Support
 
 	This code is copyright (C) 2012 Lee Goddard, Server-side Systems Ltd.
 	All Rights Reserved.
@@ -35,11 +35,15 @@ var __ActiveMooToolsKnobCtrl__ = null;
 var Knob = new Class({
 	Implements: [Options, Events],
 	
-	options: {
-		element: 		null,	/* conatiner to replace with canvas/image */
+	options: {					// Keep options lower-case for dataset compatability
+		element: 		null,	/* DOM element to replace with this control */
 		value:			0,		/* Initial value of control: if not supplied, taken from attributes 'value' or 'data-value' */
 		range:			[-100, 100], 	/* Minimum and maximum values */
 		scale:			1,		/* Multiplier applied to number of px moved, to acheive change in .value */
+		wrapperclass:		'mooknobouter', /* Class of el that wrape .element to allow focus */
+		wrappernostyle: 		false, /* Stops setting text-decoration, margin, padding to none */
+		keychangeby:				1, 	/* When arrow keys control knob, incrase knob value by this */
+		keychangebywithshift: 10, /* As keyUnit but for when shift key is also pressed */
 		
 		onTick:			function(){},
 		onMousedown: 	function(){},
@@ -47,6 +51,7 @@ var Knob = new Class({
 	},
 
 	element:			null,
+	wrapper:			null,	/* Anchor element that wraps element to allow focus */
 	movement:		null,	/* The Euclidean distance of dragged cursor from origin in element  */
 	anchor:			null,	/* Position of element at knob mouse down */
 	value:			null,	/* Actual value of control */
@@ -62,6 +67,24 @@ var Knob = new Class({
 		this.element = (typeof this.options.element == 'string')?
 			document.id(this.options.element) 
 			: this.element = this.options.element;
+		
+		var wrapperStyle = this.options.wrappernostyle?
+			{} :	{
+				'text-decoration' : 'none',
+				'padding' : 0,
+				'margin'  : 0
+			};
+		
+		this.wrapper = new Element('a', {
+			href: 'javascript:void(0)',
+			'class': this.options.wrapperclass,
+			styles: wrapperStyle,
+			events: {
+				focus: this.focus,
+				blur:  this.blur
+			}
+		});
+		this.wrapper.wraps( this.element );
 			
 		var block = this.element.getStyle('display');
 		if (block=='inline' || block=='')
@@ -69,6 +92,7 @@ var Knob = new Class({
 			
 		this.value = this.options.value;
 		this.element.store('self', this);
+		this.wrapper.store('self', this);
 
 		this.range = self.options.range[0] * -1
 			+ Math.abs( self.options.range[1] );
@@ -79,8 +103,6 @@ var Knob = new Class({
 
 	attach: function(){
 		this.element.addEvent('mousedown', this.mousedown);
-		// this.element.addEvent('focus', this.focus);
-		// this.element.addEvent('blur', this.blur);
 	},
 
 	destroy: function(){ this.detach() },
@@ -90,12 +112,62 @@ var Knob = new Class({
 		if (this.dragging) 
 			window.removeEvent('mouseup', __ActiveMooToolsKnobCtrl__.mouseup);
 		if (__ActiveMooToolsKnobCtrl__){
-		// 	__ActiveMooToolsKnobCtrl__.element.removeEvent('focus',__ActiveMooToolsKnobCtrl__.focus);
-		// 	__ActiveMooToolsKnobCtrl__.element.removeEvent('blur', __ActiveMooToolsKnobCtrl__.blur);
+		 	__ActiveMooToolsKnobCtrl__.element.removeEvent('focus',__ActiveMooToolsKnobCtrl__.focus);
+		 	__ActiveMooToolsKnobCtrl__.element.removeEvent('blur', __ActiveMooToolsKnobCtrl__.blur);
 			window.removeEvent('mousemove', __ActiveMooToolsKnobCtrl__.mousemove);
 		}
 	},
 	
+	focus: function(e){
+		var self = this.retrieve('self');
+		e.stop();
+		__ActiveMooToolsKnobCtrl__ = self;
+		window.addEvent('keydown', self.keydown);
+	},
+
+	blur: function(e){
+		var self = this.retrieve('self');
+		e.stop();
+		__ActiveMooToolsKnobCtrl__ = null;
+		window.removeEvent('keydown', self.keydown);
+	},
+
+	/* When the control has focus, the arrow keys change the value
+		by the amount specified in the options. Use of the shift key
+		can optionally change increase the change, by default by a 
+		factor of ten. Use of meta/ctrl/alt maimises or minimises
+		the value within the specified range. */
+	keydown: function(e){
+		var self = __ActiveMooToolsKnobCtrl__;
+		var change;
+		switch(e.key){
+			case 'down':
+			case 'left':
+				e.stop();
+				change = self.options.keychangeby * -1;
+				break;
+			case 'up':
+			case 'right':
+				e.stop();
+				change = self.options.keychangeby;
+		}
+		
+		if (change){
+			if (e.shift) change *= self.options.keychangebywithshift;
+			if (self.options.range 
+				&& (e.control || e.alt || e.meta)
+			){
+				self.value = self.options.range[
+					(change < 0)? 0 : 1
+				]
+			}
+			else {
+				self.value += change;	
+			}
+			self.render();
+		}
+	},
+
 	mousedown: function(e){
 		// Get element position here, not earlier, to allow for resizing:
 		var self = this.retrieve('self');
@@ -161,6 +233,10 @@ var Knob = new Class({
 		self.render();
 	},
 	
+	/* Rotates the control knob.
+		Requires this.value to be set.
+		Sets this.degrees, and element's aria-valuenow/-valuetext
+	*/
 	render: function(){
 		this.degrees = this.value * (360 / this.range);
 		this.element.set('aria-valuenow', this.value);

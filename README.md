@@ -8,13 +8,16 @@ Provides a rotary knob control for Mootools
 How to use
 ----------
 
-Until docs are written, please see Docs/index.html for a working example
-
 This widget aims to provide a rotary knob control for MooTools.
 
 A *Knob* object can be instantiated with a variety of options,
 and the library also parses the DOM for elements with class *.mooknob*,
 replacing each with an instance of the Knob control.
+
+All knobs require user-supplied styling.
+
+Knobs can be controlled with keyboard and/or mouse, and provide
+WIA-ARIA attributes.
 
 CSS
 ---
@@ -77,7 +80,25 @@ The equivalent to the above HTML would be:
 		value: 10
 	});
 	
-The following events are supplied:
+OPTIONS
+-------
+
+The following options are available. Some may be supplied as 
+*dataset-* attributes when their values are literal.
+
+* **element**: the DOM element to replace with this control
+* **value**: (*0*) The iInitial value of the control. If not supplied, taken from attributes *value* or *data-value*
+* **range**: (*[-100, 100]*) The minimum and maximum values. May be supplied in HTML as *aria-valuemin* and *aria-valuemax*.
+* **scale**: (*1*) Multiplier applied to the number of pixels the mosue may be moved, to acheive change in the **value** field (see Events, below)
+* **wrapperclass**: (*mooknobouter*) CSS class of the anchor element that wraps the knob element (*element*, above), to allow the control to take keyboard focus.
+* **wrappernostyle**: (*false*) By default, the anchor that wraps the knob, to allow keyboard focus, has CSS styles alter (no text-decoration, border or padding). This can be prevented though this attribute.
+* **keychangeby**: (*1*) When arrow keys control the knob, the **value** field is increased by this factor
+* **keychangebywithshift**: (*10*) As **keychangeby**, above, but for when shift, alt, or meta key is also pressed 
+
+EVENTS
+------
+
+In addition to the above options, the following events are supplied:
 
 * **onMousedown**: fired when the knob is clicked
 * **onMouseup**: fired when the knob is released but before it is rendered
@@ -92,5 +113,4 @@ of the widget, using the following object fields:
 * **degrees** contains the amount by which the knob will be rotated, and can be set in accordance with the values accepted by the CSS3 Transform/rotate property (0-360, afik)
 	
 The **onTick** event could just be used to update a text display field.
-
 
