@@ -102,7 +102,7 @@ In addition to the above options, the following events are supplied:
 
 * **onMousedown**: fired when the knob is clicked
 * **onMouseup**: fired when the knob is released but before it is rendered
-* **	onTick**: fired as the knob is turned
+* **onTick**: fired as the knob is turned
 
 The **onTick** event is intended to allow the user to adjust the behaviour 
 of the widget, using the following object fields:
