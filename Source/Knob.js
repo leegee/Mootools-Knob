@@ -72,6 +72,8 @@ var Knob = new Class({
 			document.id(this.options.element) 
 			: this.element = this.options.element;
 		
+		// console.debug('Initialising knob '+this.element.id);
+			
 		this.element.setAttribute('tabIndex', this.element.getAttribute('tabIdex') || 0);
 
 		if (this.options.addpointer){
@@ -94,11 +96,11 @@ var Knob = new Class({
 			this.element.setStyle('display', 'inline-block'); 
 			
 		if (this.monitor && this.monitor.get('value')){
-			 this.value = this.monitor.value;
+			 this.value = parseFloat( this.monitor.value );
 		} else if (this.options.value != null){
-			this.value = this.options.value;
+			this.value = parseFloat( this.options.value);
 		} else if (this.element.value){
-			this.value = this.element.value;
+			this.value = parseFloat( this.element.value);
 		}
 		
 		this.element.store('self', this);
@@ -123,7 +125,8 @@ var Knob = new Class({
 		if ( this.monitor ){
 			var v = parseFloat( this.monitor.get('value') );
 			if (v != this.monitorOldValue){
-				this.monitorOldValue = this.value = v;
+				this.monitorOldValue = v;
+				this.value = v;
 				this.render();
 			}
 		}
@@ -151,6 +154,7 @@ var Knob = new Class({
 		else self = this;	
 		__ActiveMooToolsKnobCtrl__ = self;
 		window.addEvent('keydown', self.keydown);
+		// console.debug('Focused '+self.element.id);
 	},
 
 	blur: function(e){
@@ -259,7 +263,7 @@ var Knob = new Class({
 		If a parameter is supplied, it sets this.value
 	*/
 	render: function(v){
-		if (typeof v != 'undefined') this.value = v;
+		if (typeof v != 'undefined') this.value = parseFloat( v );
 
 		if (this.options.range){
 			if (this.value < this.options.range[0]) this.value = this.options.range[0];
@@ -329,6 +333,7 @@ Knob.parseDOM = function( selector ){
 		}
 		opts.value = el.get('value') || el.dataset.value || 0;
 		
+		// console.debug('Create knob '+el.id);
 		new Knob(opts);
 	});
 }	
