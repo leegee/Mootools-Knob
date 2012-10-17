@@ -96,6 +96,7 @@ The following options are available. Some may be supplied as
 * **keychangebywithshift**: (*10*) As **keychangeby**, above, but for when shift, alt, or meta key is also pressed 
 * **monitor**: A name for, or instance of, a DOM element that has a **value** field that shoudl be monitored for changes, to be reflected by this control. Intended for text input elements.
 * **monitorMs**: (*250*) The interval, in milliseconds, at which to check the **monitor** element, if supplied.
+* **addpointer**: (*↑*) By default the module (since 0.3) replaces **element**'s content with  an up-arrow to the element. Disable this by setting this option to null or false.
 
 EVENTS
 ------

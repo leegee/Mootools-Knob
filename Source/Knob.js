@@ -38,6 +38,7 @@ var Knob = new Class({
 	options: {					// Keep options lower-case for dataset compatability
 		element: 		null,	/* DOM element to replace with this control */
 		value:			0,		/* Initial value of control: if not supplied, taken from attributes 'value' or 'data-value' */
+		addpointer:		'↑',		/* Default is an up-arrow (↑). If you set this to null, the up-arrow is not added to the knob element */
 		range:			[-100, 100], 	/* Minimum and maximum values */
 		scale:			1,		/* Multiplier applied to number of px moved, to acheive change in .value */
 		wrapperclass:		'mooknobouter', /* Class of el that wrape .element to allow focus */
@@ -73,6 +74,10 @@ var Knob = new Class({
 		this.element = (typeof this.options.element == 'string')?
 			document.id(this.options.element) 
 			: this.element = this.options.element;
+			
+		if (this.options.addpointer){
+			this.element.set('text', this.options.addpointer );
+		}
 		
 		this.monitor = (typeof this.options.monitor == 'string')?
 			document.id(this.options.monitor) 

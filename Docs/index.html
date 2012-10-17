@@ -52,14 +52,14 @@
 		aria-valuemax='180'
 		data-value='0'
 		style='background:#aaa; margin-left:200px;font-size:32pt' 
-	>↑</span>		
+	></span>		
 		</xmp>
 		<p>The result:
 			<span id='knob-html1'
 			aria-valuemin='-180'
 			aria-valuemax='180'
 			data-value='0'
-			style='background:#aaa; margin-left:200px;font-size:32pt' class='mooknob'>↑</span>
+			style='background:#aaa; margin-left:200px;font-size:32pt' class='mooknob'></span>
 		</p>
 	</section>
 	
@@ -68,6 +68,7 @@
 		<xmp>
 	<span id='knob-html2'
 		class='mooknob'
+		data-addpointer='false'
 		style='margin-left:200px;
 			font-size:32pt;
 			border-color: black;
@@ -76,11 +77,12 @@
 			border-radius: 50%;
 			width: 1.2em;
 			height: 1.2em; 
-	'>↑</span>		
+	'>⇪</span>		
 		</xmp>
 		<p>The result:
 			<span id='knob-html2'
 			class='mooknob'
+			data-addpointer='false'
 			style='margin-left:200px;
 				border: 1px solid black;
 				background: silver;
@@ -89,20 +91,20 @@
 				font-size:28pt;
 				width: 32pt;
 				height: 32pt;
-		'>↑</span>
+		'>⇪</span>
 		</p>
 
 	<p>
-		As above, still with an implict range of +/-100, 
+		As above, with default pointer, and still with an implict range of +/-100, 
 		with initial values of -100, -50, 0, 50, 100, set in
 		the 'calling' element's <code>data-value</code> field:
 	</p>
 	<p>
-		<span style='margin-left:1em' data-value=-100 class='rotary mooknob'>↑</span>
-		<span style='margin-left:1em' data-value=-50 class='rotary mooknob'>↑</span>
-		<span style='margin-left:1em' data-value=0 class='rotary mooknob'>↑</span>
-		<span style='margin-left:1em' data-value=50 class='rotary mooknob'>↑</span>
-		<span style='margin-left:1em' data-value=100 class='rotary mooknob'>↑</span>
+		<span style='margin-left:1em' data-value=-100 class='rotary mooknob'></span>
+		<span style='margin-left:1em' data-value=-50 class='rotary mooknob'></span>
+		<span style='margin-left:1em' data-value=0 class='rotary mooknob'></span>
+		<span style='margin-left:1em' data-value=50 class='rotary mooknob'></span>
+		<span style='margin-left:1em' data-value=100 class='rotary mooknob'></span>
 	</p>
 	
 		
@@ -128,7 +130,7 @@
 	});
 	</script>
 	
-	<span id='knob-js'>↑</span>
+	<span id='knob-js'></span>
 	&mdash; value <span id='knob-js-value'>0</span>
 </xmp>
 	
@@ -142,7 +144,7 @@
 			font-size:28pt;
 			width: 32pt;
 			height: 32pt;
-		'>↑</span>
+		'></span>
 		&mdash; value <span id='knob-js-value'>0</span>
 	</p>
 	</section>
@@ -159,7 +161,7 @@
 		<p style='position:absolute'>
 		Result:
 			<span id='bg' style='position:absolute;top:0;left:200px;background:url(knob_bg_164x165.png); width:164px; height:165px'></span>
-			<span class='mooknob' id='fg' style='position:absolute;top:0;left:200px;background:url(knob_fg_164x165.png); width:164px; height:165px'></span>
+			<span class='mooknob' data-addpointer='false' id='fg' style='position:absolute;top:0;left:200px;background:url(knob_fg_164x165.png); width:164px; height:165px'></span>
 		</div>
 	</section>	
 
