@@ -62,7 +62,7 @@ var Knob = new Class({
 	initialValue:	null,	/* Cache of 'value', prior to drag starts */
 	finalValue:		null,	/* When drag ends and is not canceled */
 	dragging:		false,	/* Flag */
-	range:			null,	/* For rendering */
+	renderRange:		null,	/* For rendering */
 	
 	initialize: function( options, actx ){
 		var self = this;
@@ -105,8 +105,11 @@ var Knob = new Class({
 		
 		this.element.store('self', this);
 
-		this.range = self.options.range[0] * -1
-			+ Math.abs( self.options.range[1] );
+		self.options.range[0] = parseFloat(self.options.range[0]);
+		self.options.range[1] = parseFloat(self.options.range[1]);
+			
+		this.renderRange = parseFloat(self.options.range[0]) * -1
+			+ Math.abs( parseFloat(self.options.range[1]) );
 
 		this.attach();
 		this.render(); // dispay initial value1
