@@ -112,7 +112,7 @@ var Knob = new Class({
 			+ Math.abs( parseFloat(self.options.range[1]) );
 
 		this.attach();
-		this.render(); // dispay initial value1
+		this.render(); // display initial value1
 	},
 
 	attach: function(){
@@ -280,10 +280,11 @@ var Knob = new Class({
 			this.monitor.set('aria-valuetext', this.value);
 		}
 
-		this.degrees = this.value * (360 / this.range);
+		this.degrees = this.value * (360 / this.renderRange);
 		this.element.set('aria-valuenow', this.value);
 		this.element.set('aria-valuetext', this.value);
 		this.fireEvent('tick');
+
 		this.element.setStyles({ 
 			'transform': 'rotate('+this.degrees+'deg)',
 			'-ms-transform': 'rotate('+this.degrees+'deg)',
