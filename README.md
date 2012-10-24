@@ -115,6 +115,7 @@ The following options are available. Some may be supplied as
 * **monitor**: A name for, or instance of, a DOM element that has a **value** field that shoudl be monitored for changes, to be reflected by this control. Intended for text input elements.
 * **monitorMs**: (*250*) The interval, in milliseconds, at which to check the **monitor** element, if supplied. The monitor element's *value* (an aria-related) attribute will also be updated with changes to the control.
 * **addpointer**: (*↑*) By default the module (since 0.3) replaces **element**'s content with  an up-arrow to the element. Disable this by setting this option to null or false.
+* **forceint**:	(*false*) Force all values to be integers
 
 Events
 ------
@@ -141,4 +142,15 @@ Public Methods
 * **render**: Update the control to reflect the current state of the **value** field, which may be set by supply a single, numeric argument
 * **attach**: Called at instantiation to attach eveents to allow the control to operate
 * **detach**: Removes events
+
+FAQ
+---
+
+**When using HTML mark-up to create a knob, why do *valuemin* and *valuemax* not work?**
+
+The acceptable range of inputs should be specified through **aria-valuemin** and **aria-valuemax*, not **data-valuemin** and **data-valuemax**.
+
+**Why are arguments all lower case, rather than camel case?**
+
+To make parsing of **dataset** attributes easier to parse: these are all forced to lower case by the browser.
 
