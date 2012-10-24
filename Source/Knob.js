@@ -274,6 +274,8 @@ var Knob = new Class({
 		}
 		
 		if (this.element.get('value')) this.element.set('value', this.value);
+		this.element.set('title', this.value);
+		
 		if ( this.monitor ){
 			this.monitor.set('value', this.value);
 			this.monitor.set('aria-valuenow', this.value);
