@@ -95,6 +95,9 @@ var Knob = new Class({
 		if (block=='inline' || block=='')
 			this.element.setStyle('display', 'inline-block'); 
 			
+		self.options.range[0] = parseFloat(self.options.range[0]);
+		self.options.range[1] = parseFloat(self.options.range[1]);
+
 		if (this.monitor && this.monitor.get('value')){
 			 this.value = parseFloat( this.monitor.value );
 		} else if (this.options.value != null){
@@ -105,9 +108,6 @@ var Knob = new Class({
 		
 		this.element.store('self', this);
 
-		self.options.range[0] = parseFloat(self.options.range[0]);
-		self.options.range[1] = parseFloat(self.options.range[1]);
-			
 		this.renderRange = parseFloat(self.options.range[0]) * -1
 			+ Math.abs( parseFloat(self.options.range[1]) );
 
@@ -267,6 +267,9 @@ var Knob = new Class({
 	*/
 	render: function(v){
 		if (typeof v != 'undefined') this.value = parseFloat( v );
+
+		if (isNaN(this.value)) this.value = 
+			this.options.range? this.options.range[0] : 0;
 
 		if (this.options.forceint)
 			this.value = parseInt( this.value );
