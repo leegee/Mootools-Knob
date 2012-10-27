@@ -26,8 +26,9 @@ Controlling the Control
 By default, the control increments and decrements by 1. If the
 control receives keyboard focus, the cursor keys may be used to
 increment and decrement the value - by 10 if if the shift key is
-depressed; if the alt, or meta keys are depressed, the value
-is set to its maximum or minimum.
+depressed. If the alt/meta key is depressed whilst a cursor key is 
+pressed, the value of the control is set to its maximum or minimum,
+dependent on the cursor key..
 
 Monitoring
 ----------
@@ -37,7 +38,7 @@ A control can monitor and reflect values of another element's *value* fileld: su
 Initial Control Value
 ---------------------
 
-The initial value of the control comes from either the *monitor* elements' value, or the *options.value*/the *data-value* attribute of the *element*, or from the element's *value* field, in that order.
+The initial value of the control comes from either the *monitor* elements' value, or the *options.value* (which may come from the *data-value* attribute of the *element*), or from the element's *value* field, in that order.
 
 CSS
 ---
@@ -60,8 +61,7 @@ supports the *border-radius* property of CSS3:
 	}
 	</style>	
 
-If you place in your knob-to-be element a UTF-8 up-arrow of some kind, 
-it looks passable.
+If select the *addpointer* option (below), the widget will contain a UTF-8 up-arrow.
 
 Use in HTML, without Javascript
 -------------------------------
@@ -152,5 +152,5 @@ The acceptable range of inputs should be specified through **aria-valuemin** and
 
 **Why are arguments all lower case, rather than camel case?**
 
-To make parsing of **dataset** attributes easier to parse: these are all forced to lower case by the browser.
+To make parsing of **dataset** attributes easier: these are all forced to lower case by the browser.
 
