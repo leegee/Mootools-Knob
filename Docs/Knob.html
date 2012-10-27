@@ -16,7 +16,7 @@
 <span class="cm">...</span>
 <span class="cm">*/</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <h1>MooKnob</h1>
 
-<p>Version 0.5 - Double-click support, degreesoffset
+<p>Version 0.5 - degreesoffset, nearly got double-click support, 
 Version 0.4 - Default pointer
 Version 0.2 - WIA-ARIA and keyboard control Support</p>
 
@@ -342,14 +342,15 @@ attribute, if present, otherwise in the <code>data-value</code> attribute.
         <span class="nx">opts</span><span class="p">.</span><span class="nx">range</span> <span class="o">=</span> <span class="p">[</span><span class="nx">min</span><span class="p">,</span><span class="nx">max</span><span class="p">];</span>
     <span class="p">}</span>
     <span class="nx">opts</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="nx">el</span><span class="p">.</span><span class="nx">dataset</span><span class="p">.</span><span class="nx">value</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
-    </pre></div>             </td>           </tr>                               <tr id="section-50">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-50">&#182;</a>               </div>               <p>console.debug('Create knob '+el.id);</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">new</span> <span class="nx">Knob</span><span class="p">(</span><span class="nx">opts</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-51">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-51">&#182;</a>               </div>               <h2>OperatorError</h2>
+    
+    <span class="k">new</span> <span class="nx">Knob</span><span class="p">(</span><span class="nx">opts</span><span class="p">);</span>
+  <span class="p">});</span> <span class="c1">// Next element to convert</span>
+<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-50">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-50">&#182;</a>               </div>               <h2>OperatorError</h2>
 
 <p>Exception object for your pleasure.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">function</span> <span class="nx">OperatorError</span><span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
    <span class="k">this</span><span class="p">.</span><span class="nx">message</span> <span class="o">=</span> <span class="nx">message</span><span class="p">;</span>
    <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;OperatorError&quot;</span><span class="p">;</span>
-<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-52">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-52">&#182;</a>               </div>               <h2> Finally</h2>
+<span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-51">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-51">&#182;</a>               </div>               <h2> Finally</h2>
 
 <p>Que our parse of the DOM</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nb">document</span><span class="p">.</span><span class="nx">addEvent</span><span class="p">(</span><span class="s1">&#39;domready&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
   <span class="nx">Knob</span><span class="p">.</span><span class="nx">parseDOM</span><span class="p">();</span>  
