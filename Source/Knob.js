@@ -8,7 +8,8 @@ authors:
 - Lee Goddard
 
 requires:
-- Core
+- Core 
+- Element.Dimensions
 
 provides: [Knob]
 
@@ -57,12 +58,13 @@ var Knob = new Class({
 	monitorOldValue: null,
 	monitorTimer:	null,	/* setInterval timer for checking monitor.value */
 	movement:		null,	/* The Euclidean distance of dragged cursor from origin in element  */
-	anchor:			null,	/* Position of element at knob mouse down */
+	movementAnchor:	null,	/* Position of element at knob mouse down */
 	value:			null,	/* Actual value of control */
 	initialValue:	null,	/* Cache of 'value', prior to drag starts */
 	finalValue:		null,	/* When drag ends and is not canceled */
 	dragging:		false,	/* Flag */
 	renderRange:		null,	/* For rendering */
+	// dblClickAnchor:	null,	/* Position for double-click-to-value */
 	
 	initialize: function( options, actx ){
 		var self = this;
@@ -106,6 +108,7 @@ var Knob = new Class({
 			this.value = parseFloat( this.element.value);
 		}
 		
+		// Needed when contxt is lost in GUI
 		this.element.store('self', this);
 
 		this.renderRange = parseFloat(self.options.range[0]) * -1
@@ -116,12 +119,41 @@ var Knob = new Class({
 	},
 
 	attach: function(){
+	//	this.element.addEvent('dblclick', this.dblclick);
 		this.element.addEvent('mousedown', this.mousedown);
 		if (this.monitor) this.monitor.addEvent('change', this.monitorValueChange);
 		this.monitorTimer = this.monitorValueChange.periodical(
 			this.options.monitorMs, this
 		);
 	},
+
+	/*	
+	dblclick: function(e){
+		var self = this.retrieve('self');
+		if (!self.dblClickAnchor) 
+			self.dblClickAnchor = self.element.getCoordinates();
+		// Co-ords of click within element:
+		var x = e.page.x - self.dblClickAnchor.left;
+		var y = e.page.y - self.dblClickAnchor.top;
+		// Centre of element is width/2, height/2
+		// Angle between centre and click:
+		var theta = self.angleBetween2Points(
+			[x,y],
+			[self.dblClickAnchor.width/2, self.dblClickAnchor.height/2]
+		);
+		if (theta < 0) theta += 2 * Math.PI;
+		var degrees = theta * (180 / Math.PI);
+		degrees += 90;
+		if (degrees > 360) degrees -= 360;
+		console.log( degrees );
+	},
+	*/
+	
+    angleBetween2Points: function ( point1, point2 ) {
+        var dx = point2[0] - point1[0];
+        var dy = point2[1] - point1[1];
+        return Math.atan2( dx, dy );
+    },
 	
 	/* Monitor changes in the .monitor field's value, and update control */
 	monitorValueChange: function(e){
@@ -210,7 +242,7 @@ var Knob = new Class({
 		__ActiveMooToolsKnobCtrl__ = self;
 		self.element.focus();
 		self.focus();		
-		self.anchor = this.getPosition();
+		self.movementAnchor = this.getPosition();
 		self.initialValue = self.value;
 		window.addEvent('mousemove', self.mousemove );
 		// How to maintain lexical context?
@@ -249,14 +281,13 @@ var Knob = new Class({
 			sel.removeAllRanges();
 		}
     	
-		self.x = e.page.x - self.anchor.x;
-		self.y = e.page.y - self.anchor.y;
+		self.x = e.page.x - self.movementAnchor.x;
+		self.y = e.page.y - self.movementAnchor.y;
         
-		// var d = Math.sqrt(  Math.pow(self.anchor.x + self.x, 2)  + Math.pow(self.anchor.y + self.y, 2)  );
+		// var d = Math.sqrt(  Math.pow(self.movementAnchor.x + self.x, 2)  + Math.pow(self.movementAnchor.y + self.y, 2)  );
 		
 		self.movement = (Math.abs(self.x) > Math.abs(self.y)? self.x : self.y);
 		self.value    = self.initialValue + ( self.movement * self.options.scale);
-
 		self.render();
 	},
 	
