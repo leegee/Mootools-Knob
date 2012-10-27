@@ -43,7 +43,7 @@ var Knob = new Class({
 		scale:			1,		/* Multiplier applied to number of px moved, to acheive change in .value */
 		keychangeby:				1, 	/* When arrow keys control knob, incrase knob value by this */
 		keychangebywithshift: 10, /* As keyUnit but for when shift key is also pressed */
-		forceInt:	false,	/* Force all values to be integers */
+		forceint:	false,	/* Force all values to be integers */
 		monitor:		null, /* May be a string or DOM element to monitor: changes in this elements *value* attribute will change the control's *value* attribute, and cause the control to be re-rendered. */
 		monitorMs:	1000/4, /* Frequency of checking for monitor.value changes */
 		
@@ -257,9 +257,6 @@ var Knob = new Class({
 		self.movement = (Math.abs(self.x) > Math.abs(self.y)? self.x : self.y);
 		self.value    = self.initialValue + ( self.movement * self.options.scale);
 
-		if (self.options.forceint)
-			self.value = parseInt( self.value );
-		
 		self.render();
 	},
 	
@@ -270,6 +267,9 @@ var Knob = new Class({
 	*/
 	render: function(v){
 		if (typeof v != 'undefined') this.value = parseFloat( v );
+
+		if (this.options.forceint)
+			this.value = parseInt( this.value );
 
 		if (this.options.range){
 			if (this.value < this.options.range[0]) this.value = this.options.range[0];
