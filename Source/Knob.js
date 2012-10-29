@@ -10,6 +10,7 @@ authors:
 requires:
 - Core 
 - Element.Dimensions
+- Element.Measure
 
 provides: [Knob]
 
@@ -17,6 +18,7 @@ provides: [Knob]
 */
 
 // # MooKnob
+// Version 0.6 - degrees-to-value for dblclick; better dragging: still no auto-scale for dragging
 //	Version 0.5 - degreesoffset, nearly got double-click support, 
 //	Version 0.4 - Default pointer
 //	Version 0.2 - WIA-ARIA and keyboard control Support
@@ -100,11 +102,10 @@ var Knob = new Class({
 	dragging:		false,	
 	// For rendering 
 	renderRange:		null,	
-	/* // Positioning info for double-click-to-value 
-	 dblClickAnchor:	null,	
-	*/
+	// Positioning info for double-click-to-value 
+	 dblClickAnchor:	null,
 
-// ### Methods
+	 // ### Methods
 
 	initialize: function( options, actx ){
 		var self = this;
@@ -115,7 +116,9 @@ var Knob = new Class({
 			: this.element = this.options.element;
 		
 		// Required for keyboard focus
-		this.element.setAttribute('tabIndex', this.element.getAttribute('tabIdex') || 0);
+		this.element.setAttribute('tabIndex',
+			this.element.getAttribute('tabIdex') || 0
+		);
 
 		// I was adding this manually a lot, and it was tedious
 		// to keep looking-up UTF-8 arrow characters
@@ -127,7 +130,7 @@ var Knob = new Class({
 				document.id(this.options.monitor) 
 				: this.monitor = this.options.monitor;
 		}
-	
+		
 		var block = this.element.getStyle('display');
 		if (block=='inline' || block=='')
 			this.element.setStyle('display', 'inline-block'); 
@@ -146,7 +149,8 @@ var Knob = new Class({
 		// Needed when contxt is lost in GUI
 		this.element.store('self', this);
 
-		this.renderRange = parseFloat(self.options.range[0]) * -1
+		this.renderRange = 1
+			+ Math.abs( parseFloat(self.options.range[0]) )
 			+ Math.abs( parseFloat(self.options.range[1]) );
 
 		this.attach();
@@ -158,8 +162,7 @@ var Knob = new Class({
 		this.element.addEvents({
 			focus:		this.focus,
 			blur:		this.blur,
-		/*	dblclick:	this.dblclick,
-		*/
+			dblclick:	this.dblclick,
 			mousedown:	this.mousedown
 		});
 		if (this.monitor) this.monitor.addEvent('change', this.monitorValueChange);
@@ -183,8 +186,7 @@ var Knob = new Class({
 			__ActiveMooToolsKnobCtrl__.element.removeEvents({
 				focus:		__ActiveMooToolsKnobCtrl__.focus,
 				blur: 	 	__ActiveMooToolsKnobCtrl__.blur,
-			/*	dblclick: 	__ActiveMooToolsKnobCtrl__.dblclick,
-			*/
+				dblclick: 	__ActiveMooToolsKnobCtrl__.dblclick,
 				mousedown: 	__ActiveMooToolsKnobCtrl__.mousedown
 			});
 			
@@ -200,41 +202,38 @@ var Knob = new Class({
 	
 	destroy: function(){ this.detach() },
 
-// Double-click the control to set it's value:
-// this would make my GUI a lot easier, if only 
-// I could convert the angle to a value.
-
-/*
+// Double-click the control to set it's value
 	dblclick: function(e){
 		var self = this.retrieve('self');
-		if (!self.dblClickAnchor) 
-			self.dblClickAnchor = self.element.getCoordinates();
-		var theta = self.angleBetween2Points( 		// Find the angle between the element centre and the click:
-			[e.page.x - self.dblClickAnchor.left, e.page.y - self.dblClickAnchor.top ], // Co-ords of click within element:
-			[self.dblClickAnchor.width/2, self.dblClickAnchor.height/2] // Centre of element is width/2, height/2
-		);
-		if (theta < 0) theta += 2 * Math.PI;		// Keep radians positive
-		var degrees = theta * (180 / Math.PI);	// Convert to degrees
-		degrees *= -1;							// Invert to display
-
-		console.log( degrees +' '+(degrees*-1) );		// degrees += self.options.degreesoffset;
+		// This is only set when needed, and reset incase of page resize
+		self.dblClickAnchor = self.element.getCoordinates();
 		
-		? this.value = (degrees+this.options.degreesoffset) / this.renderRange;
+		// Find the angle between the element centre and the click:
+		var degrees = ((self.angleBetween2Points( 
+			 // Co-ords of click within element:
+			[e.page.x - self.dblClickAnchor.left,
+			 e.page.y - self.dblClickAnchor.top ], 
+			 // Centre of element is width/2, height/2
+			[self.dblClickAnchor.width/2, 
+			 self.dblClickAnchor.height/2] 
+		) 
+		// Adjust for display	
+		- 180) * -1)
+	//	+ self.options.degreesoffset;
 
-		self.element.setStyles({ 
-			'transform': 'rotate('+degrees+'deg)',
-			'-ms-transform': 'rotate('+degrees+'deg)',
-			'-webkit-transform': 'rotate('+degrees+'deg)',
-			'-o-transform': 'rotate('+degrees+'deg)',
-			'-moz-transform': 'rotate('+degrees+'deg)',
-		});
+		var stepPerDegree = self.renderRange / 360;
+		self.value = self.options.range[0] + stepPerDegree * degrees;
+		
+		$('degrees').set('text', degrees);
+		$('value').set('text', stepPerDegree +' ... '+ self.value);
+		
+		self.render();
 	},
-*/
 	
     angleBetween2Points: function ( point1, point2 ) {
         var dx = point2[0] - point1[0];
         var dy = point2[1] - point1[1];
-        return Math.atan2( dx, dy );
+        return Math.atan2( dx, dy ) * (180 / Math.PI);
     },
 	
 // Monitor changes in the .monitor field's value, and update control
@@ -317,17 +316,6 @@ var Knob = new Class({
 		self.fireEvent('mousedown');
 	},
 
-// Unsure how to bind the mouseup event to an object,
-// hence the ugly global
-	mouseup: function(e){
-		var self = __ActiveMooToolsKnobCtrl__;
-		e.stop();
-		window.removeEvent('mousemove', self.mousemove);
-		window.removeEvent('mouseup', self.mouseup);
-		self.dragging = false;
-		self.fireEvent('mouseup');
-	},
-	
 // Sets the x, y field as the position of the mouse curosr relative to the knob,
 // sets the movement field as the greater of these two, 
 // and increments the value field by 'movement' multiplied by the value of
@@ -351,12 +339,41 @@ var Knob = new Class({
 		self.x = e.page.x - self.movementAnchor.x;
 		self.y = e.page.y - self.movementAnchor.y;
         
-		/* var d = Math.sqrt(  Math.pow(self.movementAnchor.x + self.x, 2)  + Math.pow(self.movementAnchor.y + self.y, 2)  ); */
+		//var d = Math.sqrt(  Math.pow(self.movementAnchor.x + self.x, 2)  + Math.pow(self.movementAnchor.y + self.y, 2)  );
 		
-		self.movement = (Math.abs(self.x) > Math.abs(self.y)? self.x : self.y);
-		self.value    = self.initialValue + ( self.movement * self.options.scale);
+		// self.movement = (Math.abs(self.x) > Math.abs(self.y)? self.x : self.y);
+		
+		if (Math.abs(self.x) > Math.abs(self.y)){
+			self.movement = self.x;
+			if (self.x < self.movementAnchor.x)
+				self.movement *= -1;
+		} 
+		else {
+			self.movement = self.y;
+			if (self.y < self.movementAnchor.y)
+				self.movement *= -1;
+		}
+		
+		self.value = self.initialValue +
+			(self.movement * self.options.scale);
+		
+		// console.log( self.initialValue +' moved by '+ (self.movement * self.options.scale) +' = '+self.value);
+		
 		self.render();
 	},
+
+// Cancel the movemouse/dragging events
+// Unsure how to bind the mouseup event to an object,
+// hence the ugly global
+	mouseup: function(e){
+		var self = __ActiveMooToolsKnobCtrl__;
+		e.stop();
+		window.removeEvent('mousemove', self.mousemove);
+		window.removeEvent('mouseup', self.mouseup);
+		self.dragging = false;
+		self.fireEvent('mouseup');
+	},
+	
 	
 // Rotates the control knob.
 // Requires this.value to be set.
@@ -432,7 +449,7 @@ Knob.parseDOM = function( selector ){
 				// Real issues
 				else {
 					console.log('Error setting '+i+' from dataset');
-					console.info(e);
+					console.error(e);
 				}
 			}
 		});

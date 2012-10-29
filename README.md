@@ -14,10 +14,11 @@ A *Knob* object can be instantiated with a variety of options,
 and the library also parses the DOM for elements with class *.mooknob*,
 replacing each with an instance of the Knob control.
 
-All knobs require user-supplied styling.
+All knobs require user-supplied styling: details below.
 
-Knobs can be controlled with keyboard and/or mouse, and provide
-WIA-ARIA attributes.
+Knobs can be controlled with cursor keys, mouse drags, and double clicks,
+and provide WIA-ARIA attributes populated from both the initial data,
+and computed data in real time.
 
 Knobs can monitor and reflect a field with a *value* attribute.
 
@@ -28,20 +29,28 @@ control receives keyboard focus, the cursor keys may be used to
 increment and decrement the value - by 10 if if the shift key is
 depressed. If the alt/meta key is depressed whilst a cursor key is 
 pressed, the value of the control is set to its maximum or minimum,
-dependent on the cursor key..
+dependent on the cursor key.
+
+The effect of mouse dragging the control must be scaled using the
+option `scale`: that is, the number of pixels moved will be multiplied
+by the value of the `scale` option (or `data-scale` attribute) and added
+to the current value of the knob. If your knob runs from -1000 to 1000, you
+may not need to set the `scale`, but if you knob runs from 1 to 10, then a
+typical mouse movement of 100 pixels will have be useless without at least
+setting `scale` to at least 0.01. What an `autoscale` option be useful?
 
 Monitoring
 ----------
 
-A control can monitor and reflect values of another element's *value* fileld: such element should be supplied via the *monotpr* field, as described in 'Options', below.
+A control can monitor and reflect values of another element's `value` fileld: such element should be supplied via the *monotpr* field, as described in 'Options', below.
 
 Initial Control Value
 ---------------------
 
-The initial value of the control comes from either the *monitor* elements' value, or the *options.value* (which may come from the *data-value* attribute of the *element*), or from the element's *value* field, in that order.
+The initial value of the control comes from either the `monitor` elements' `value` attribute, or the `options.value` (which may come from the `data-value` attribute of the `element`), or from the element's `value` attribute, in that order.
 
-CSS
----
+Styling
+-------
 
 As seems to be usual for MooTools, no CSS is supplied. However,
 the Docs/index.html page contains some examples. A basic gray
@@ -63,30 +72,28 @@ supports the *border-radius* property of CSS3:
 
 If select the *addpointer* option (below), the widget will contain a UTF-8 up-arrow.
 
-Use in HTML, without Javascript
--------------------------------
+WIA-ARIA And Use in HTML, without Javascript
+--------------------------------------------
 
 The widget can be configued using the attribute of any element 
-which it consumes.
+which it consumes. Any option listed under the JavaScript API
+can be passed as an HTML attribute, prefixed with `data-`.
 
-The range of values the widget will supports defaults to +/-100,
-but can be set with the aria-valuemin and aria-valuemax attributes 
-of the element. 
+The range of values the widget will supports (default ±100)
+can be set with the `aria-valuemin` and `aria-valuemax` attributes 
+of the element, which equate to the object's `range` option array.
 
-The initial value can be set via the value attribute
-or data-value attribute. 
-
-The chosen value of the control will be placed
-in the aria-valuenow and aria-valuetext attributes, and in the value
-attribute, if present, otherwise in the data-value attribute.
+The initial (described above) will be placed
+in the `aria-valuenow` and `aria-valuetext` attributes, as well as
+in the `value` attribute, if present, otherwise in the `data-value` attribute.
 
 For example, the following element will produce a rotary knob with
-an up-arrow (↑), an initial value of 10, and range between -20 and 20:
+an up-arrow (`↑`), an initial value of 5, and range between 0 and 10:
 
 	<span id='knob1' 
-		data-value='10' 
-		aria-valuemin='-20'
-		aria-valuemax='20'
+		data-value='5' 
+		aria-valuemin='0'
+		aria-valuemax='10'
 	>↑</span>
 
 JavaScript API
@@ -96,8 +103,8 @@ The equivalent to the above HTML would be:
 
 	new Knob({
 		element: 'knob1',
-		range: [-20, 20],
-		value: 10
+		value: 5,
+		range: [0, 10]
 	});
 	
 Options
@@ -128,15 +135,14 @@ In addition to the above options, the following events are supplied:
 * `onTick`: fired as the knob is turned
 
 The `onTick` event is intended to allow the user to adjust the behaviour 
-of the widget, using the following object fields:
+of the widget, and to allow this widget to affect other objects,
+using the following object fields:
 
 * `x` and `y` represent the position of the mouse curosr relative to the knob
-* `movement`  contains the greater of these two, 
-* `value` contains the previous value incremented by `movement` multiplied by the value of the `scale` option (*this.options.scale*).
-* `degrees` contains the amount by which the knob will be rotated, and can be set in accordance with the values accepted by the CSS3 Transform/rotate property (0-360, afik)
+* `movement`  contains the greater of these two
+* `value` contains the calculated value of the knob
+* `degrees` contains the amount by which the knob will be rotated, after `onTick` has returned, and can be set in accordance with the value in degrees, as accepted by the CSS3 Transform/rotate property.
 	
-The `onTick` event could just be used to update a text display field.
-
 Public Methods
 --------------
 
@@ -147,7 +153,9 @@ Public Methods
 TO DO
 -----
 
-* Double click support is nearly available, but how to convert an angle to a value?
+* Double click support seems to miss the very minimum value of the range.
+
+* Considering if the knob should support more intuative dragging, dependant upon the knob's current value.
 
 FAQ
 ---

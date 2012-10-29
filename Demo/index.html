@@ -9,8 +9,8 @@
 	<meta name="description" content="A rotary knob control for MooTools"/>
 	<meta name="keywords" content="knob, rotary, ui, mootools, javascript"/>
 
-    	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/mootools/1.4/mootools-yui-compressed.js"></script>
-
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/mootools/1.4/mootools-yui-compressed.js"></script>
+	<script type="text/javascript" src="mootools-more.js"/></script>
 	<script type="text/javascript" src="../Source/Knob.js"></script>
  
 	<script type="text/javascript">
@@ -48,7 +48,10 @@
 		background-image: radial-gradient(12pt 12pt 45deg, circle cover, yellow 0%, orange 100%, red 95%);
 	}
 	
-	</style>	
+	.mooknob-label {
+		color: black;	
+	}
+			</style>	
     	</head>
     	
     	
@@ -180,7 +183,7 @@
 	<section>
 		<h2>Inline Graphics</h2>
 		<p>
-		Default values, with some quick graphics.
+		A range of zero to 10, with some quick graphics.
 		Added <code>data-scale=0.1</code> to allow greater mousemovements to have smaller effect,
 		so the user has to drag further to twist the knob.
 		Added <code>degreesoffset=180</code>, so that the pointer is initially pointing
@@ -191,19 +194,30 @@
 			<span id='bg' style='position:absolute;top:0;background:url(knob_bg_164x165.png); width:164px; height:165px'></span>
 			<span class='mooknob' id='fg'
 			data-addpointer='false'
-			data-scale='0.1'
 			data-degreesoffset='180'
+			data-scale='0.1'
+			data-value='0'
+			aria-valuemin='0'
+			aria-valuemax='10'
 			style='position:absolute;top:0;left:0;background:url(knob_fg_164x165.png); width:164px; height:165px'></span>
 		</div>
 		</xmp>
 		<p style='position:absolute'>
 		Result:
-			<span id='bg' style='position:absolute;top:0;left:200px;background:url(knob_bg_164x165.png); width:164px; height:165px'></span>
+			<span id='bg' style=' position:absolute;top:0;left:200px;background:url(knob_bg_164x165.png); width:164px; height:165px'></span>
 			<span class='mooknob' data-addpointer='false' 
-			data-scale='0.1'
+			data-scale='0.01'
+			data-value='0'
+			data-monitor='volume'
+			aria-valuemin='0'
+			aria-valuemax='10'
 			data-degreesoffset='180'
-			id='fg' style='position:absolute;top:0;left:200px;background:url(knob_fg_164x165.png); width:164px; height:165px'></span>
-		</div>
+			id='fg' style='outline: 0;position:absolute;top:0;left:200px;background:url(knob_fg_164x165.png); width:164px; height:165px'></span>
+			
+			<input type='text' id='volume'
+			style='position:absolute; left: 400px; width:4em'
+			/>
+		</p>
 	</section>	
 
     	</body>
