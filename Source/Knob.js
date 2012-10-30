@@ -73,7 +73,7 @@ var Knob = new Class({
 		// Adjusts rotation by degrees: changes the knob type from a pan control to a 0-10 control, for eample.
 		degreesoffset:	0,
 		// Milliseconds after which onComplete is fired if render has been inactive
-		completedelay: 500,
+		completedelay: 1000,
 		
 		// Fired when all processing is done, but for rotation the control by the value in `this.degrees`
 		onTick:			function(){},
@@ -487,8 +487,13 @@ Knob.parseDOM = function( selector ){
 				}
 			) || i;
 			
+			// If key changed fron onx to onX, assume code to wrap:
+			if (keyToSet != i){
+				el.dataset[i] = '(function(){ ' + el.dataset[i] +'})';
+			}
+			
 			// Rough casting 
-			try { 
+			try {
 				opts[keyToSet] = eval( el.dataset[i] );
 			}
 			catch(e) {

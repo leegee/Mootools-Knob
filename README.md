@@ -135,12 +135,11 @@ In addition to the above options, the following events are supported:
 * `onComplete`: fired when no changes have taken place for the number milliseconds defined in the `completedelay` option.
 * `onTick`: fired as the knob is turned
 
-The options may be passed as HTML dataset attributes by prepending `data-`,
-though you will need to consider that supplied code will be evaluated when
-parsed from the DOM, so will need something like this:
+The options may be passed as HTML dataset attributes by prepending `data-`.
+The supplied code is wrapped:
 
     (function(){
-        alert("My value is "+this.value)
+        // Supplied code here
     })
 
 The `onTick` event is intended to allow the user to adjust the behaviour 
