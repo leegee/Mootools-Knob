@@ -2,7 +2,7 @@ name: MooKnob
 author: leegee
 category: Interface
 tags: [widget, knob, rotary, control, ui]
-#docs: http://url.to.docs
-#demo: http://url.to.demo
+docs: https://github.com/leegee/Mootools-Knob/tree/master/Docs
+demo: https://github.com/leegee/Mootools-Knob/tree/master/Demo
 current: 0.4
 
