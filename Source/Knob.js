@@ -18,6 +18,7 @@ provides: [Knob]
 */
 
 // # MooKnob
+// Version 0.7 - auto-scale for dragging
 // Version 0.6 - degrees-to-value for dblclick; better dragging: still no auto-scale for dragging
 //	Version 0.5 - degreesoffset, nearly got double-click support, 
 //	Version 0.4 - Default pointer
@@ -55,8 +56,9 @@ var Knob = new Class({
 		addpointer:		'↑',	
 		// Minimum and maximum values 		
 		range:			[-100, 100], 
-		// Multiplier applied to number of px moved, to acheive change in .value 
-		scale:			1,			
+		// Multiplier applied to number of px moved, to acheive change in .value
+		// Set in relation to the `range` option, unless the user specifies a value
+		scale:			null,			
 		// When arrow keys control knob, incrase knob value by this 
 		keychangeby:				1, 	
 		// As keyUnit but for when shift key is also pressed 
@@ -153,6 +155,10 @@ var Knob = new Class({
 			+ Math.abs( parseFloat(self.options.range[0]) )
 			+ Math.abs( parseFloat(self.options.range[1]) );
 
+		if (this.renderRange > 999) this.options.scale = 1
+		else if (this.renderRange > 99) this.options.scale = 0.1
+		else this.options.scale = 0.01
+
 		this.attach();
 		this.render(); // display initial value1
 	},
@@ -218,14 +224,16 @@ var Knob = new Class({
 			 self.dblClickAnchor.height/2] 
 		) 
 		// Adjust for display	
-		- 180) * -1)
-	//	+ self.options.degreesoffset;
+		- 180) * -1);
+	/*	+ self.options.degreesoffset; */
 
 		var stepPerDegree = self.renderRange / 360;
 		self.value = self.options.range[0] + stepPerDegree * degrees;
 		
-	//	$('degrees').set('text', degrees);
-	//	$('value').set('text', stepPerDegree +' ... '+ self.value);
+		/*
+		$('degrees').set('text', degrees);
+		$('value').set('text', stepPerDegree +' ... '+ self.value);
+		*/
 		
 		self.render();
 	},
@@ -339,9 +347,9 @@ var Knob = new Class({
 		self.x = e.page.x - self.movementAnchor.x;
 		self.y = e.page.y - self.movementAnchor.y;
         
-		//var d = Math.sqrt(  Math.pow(self.movementAnchor.x + self.x, 2)  + Math.pow(self.movementAnchor.y + self.y, 2)  );
-		
-		// self.movement = (Math.abs(self.x) > Math.abs(self.y)? self.x : self.y);
+		/*
+		var d = Math.sqrt(  Math.pow(self.movementAnchor.x + self.x, 2)  + Math.pow(self.movementAnchor.y + self.y, 2)  );
+		*/
 		
 		if (Math.abs(self.x) > Math.abs(self.y)){
 			self.movement = self.x;
@@ -356,8 +364,6 @@ var Knob = new Class({
 		
 		self.value = self.initialValue +
 			(self.movement * self.options.scale);
-		
-		// console.log( self.initialValue +' moved by '+ (self.movement * self.options.scale) +' = '+self.value);
 		
 		self.render();
 	},

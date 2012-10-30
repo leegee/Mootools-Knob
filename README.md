@@ -31,13 +31,12 @@ depressed. If the alt/meta key is depressed whilst a cursor key is
 pressed, the value of the control is set to its maximum or minimum,
 dependent on the cursor key.
 
-The effect of mouse dragging the control must be scaled using the
+The effect of mouse dragging the control is scaled using the
 option `scale`: that is, the number of pixels moved will be multiplied
 by the value of the `scale` option (or `data-scale` attribute) and added
-to the current value of the knob. If your knob runs from -1000 to 1000, you
-may not need to set the `scale`, but if you knob runs from 1 to 10, then a
-typical mouse movement of 100 pixels will have be useless without at least
-setting `scale` to at least 0.01. What an `autoscale` option be useful?
+to the current value of the knob: the great the range of the knob, the smaller
+the value of `scale`. If you do not like the speed of the knob movement
+in relation to mouse dragging, change `scale`.
 
 Monitoring
 ----------
@@ -116,7 +115,7 @@ The following options are available. Some may be supplied as
 * `element`: the DOM element to replace with this control
 * `value`: (*0*) The iInitial value of the control. If not supplied, taken from attributes *value* or *data-value*
 * `range`: (*[-100, 100]*) The minimum and maximum values. May be supplied in HTML as *aria-valuemin* and *aria-valuemax*.
-* `scale`: (*1*) Multiplier applied to the number of pixels the mosue may be moved, to acheive change in the `value` field (see Events, below)
+* `scale`: (*null*) Multiplier applied to the number of pixels the mosue may be moved, to acheive change in the `value` field (see Events, below). This is set automatically upon initialisation, unless the user specifies a value.
 * `keychangeby`: (*1*) When arrow keys control the knob, the `value` field is increased by this factor
 * `keychangebywithshift`: (*10*) As `keychangeby`, above, but for when shift is held.
 * `monitor`: A name for, or instance of, a DOM element that has a `value` field that shoudl be monitored for changes, to be reflected by this control. Intended for text input elements.
