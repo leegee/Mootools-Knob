@@ -224,8 +224,8 @@ var Knob = new Class({
 		var stepPerDegree = self.renderRange / 360;
 		self.value = self.options.range[0] + stepPerDegree * degrees;
 		
-		$('degrees').set('text', degrees);
-		$('value').set('text', stepPerDegree +' ... '+ self.value);
+	//	$('degrees').set('text', degrees);
+	//	$('value').set('text', stepPerDegree +' ... '+ self.value);
 		
 		self.render();
 	},
