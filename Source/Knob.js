@@ -18,6 +18,7 @@ provides: [Knob]
 */
 
 // # MooKnob
+// Version 0.8 - added onComplete event and support data-set defined events
 // Version 0.7 - auto-scale for dragging
 // Version 0.6 - degrees-to-value for dblclick; better dragging: still no auto-scale for dragging
 //	Version 0.5 - degreesoffset, nearly got double-click support, 
@@ -68,16 +69,20 @@ var Knob = new Class({
 		// May be a string or DOM element to monitor: changes in this elements *value* attribute will change the control's *value* attribute, and cause the control to be re-rendered. 
 		monitor:		null, 			
 		// Frequency of checking for monitor.value changes 
-		monitorMs:	1000/4, 		
+		monitorms:	1000/4, 		
 		// Adjusts rotation by degrees: changes the knob type from a pan control to a 0-10 control, for eample.
 		degreesoffset:	0,
+		// Milliseconds after which onComplete is fired if render has been inactive
+		completedelay: 500,
 		
 		// Fired when all processing is done, but for rotation the control by the value in `this.degrees`
 		onTick:			function(){},
 		// Fired when the main mouse button is depressed, but after processing
 		onMousedown: 	function(){},
 		// Fired when the main mouse button is released, but after processing
-		onMouseUp:		function(){}
+		onmouseup:		function(){},
+		// Fired when movement is complete, after `options.completedelay` milliseconds
+		onComplete:		function(){}
 	},
 
 	// ### Other fields
@@ -86,31 +91,34 @@ var Knob = new Class({
 	element:			null,
 	// DOM element: See `options.monitor`
 	monitor:			null,	
-	// Previous value of the monitor element 
-	monitorOldValue: null,
 	// setInterval timer for checking monitor.value 
-	monitorTimer:	null,	
+	monitorTimer:		null,	
 	// The Euclidean distance of dragged cursor from origin in element  
-	movement:		null,	
+	movement:			null,	
 	// Position of element at knob mouse down 
-	movementAnchor:	null,	
+	movementAnchor:		null,	
 	// Actual value of control 
-	value:			null,	
+	value:				null,	
 	// Cache of 'value', prior to drag starts 
-	initialValue:	null,	
+	initialValue:		null,	
 	// When drag ends and is not canceled 
-	finalValue:		null,	
+	finalValue:			null,	
 	// Flag 
-	dragging:		false,	
+	dragging:			false,	
 	// For rendering 
 	renderRange:		null,	
 	// Positioning info for double-click-to-value 
-	 dblClickAnchor:	null,
+	dblClickAnchor:		null,
+	// Timer - see render()
+	onCompleteTimer:	null,
+	// Set to false after initial render
+	initialising:	true,
+	// Flag
+	allowRender: true,
 
 	 // ### Methods
 
 	initialize: function( options, actx ){
-		var self = this;
 		this.setOptions(options);
 		
 		this.element = (typeof this.options.element == 'string')?
@@ -137,8 +145,8 @@ var Knob = new Class({
 		if (block=='inline' || block=='')
 			this.element.setStyle('display', 'inline-block'); 
 			
-		self.options.range[0] = parseFloat(self.options.range[0]);
-		self.options.range[1] = parseFloat(self.options.range[1]);
+		this.options.range[0] = parseFloat(this.options.range[0]);
+		this.options.range[1] = parseFloat(this.options.range[1]);
 
 		if (this.monitor && this.monitor.get('value')){
 			 this.value = parseFloat( this.monitor.value );
@@ -152,8 +160,8 @@ var Knob = new Class({
 		this.element.store('self', this);
 
 		this.renderRange = 1
-			+ Math.abs( parseFloat(self.options.range[0]) )
-			+ Math.abs( parseFloat(self.options.range[1]) );
+			+ Math.abs( parseFloat(this.options.range[0]) )
+			+ Math.abs( parseFloat(this.options.range[1]) );
 
 		if (this.renderRange > 999) this.options.scale = 1
 		else if (this.renderRange > 99) this.options.scale = 0.1
@@ -171,23 +179,39 @@ var Knob = new Class({
 			dblclick:	this.dblclick,
 			mousedown:	this.mousedown
 		});
-		if (this.monitor) this.monitor.addEvent('change', this.monitorValueChange);
-		this.monitorTimer = this.monitorValueChange.periodical(
-			this.options.monitorMs, this
+		if (this.monitor) this.setupMonitor();
+		
+		// An ugly way to prevent the onComplete event being fired
+		// by monitor elements during initialisation: XXX could try
+		// fixing this 
+		var self = this;
+		setTimeout( 
+			function(){
+				self.initialising = false
+			},
+			1000
 		);
 	},
 
+	setupMonitor: function(){			
+		this.monitor.addEvent('change', this.monitorValueChange);
+		this.monitorTimer = this.monitorValueChange.periodical(
+			this.options.monitorms, this
+		);
+	},
+
+	teardownMonitor: function(){
+		if (this.monitorTimer) clearInterval( this.monitorTimer );
+		this.monitor.removeEvent(
+			'change', this.monitorValueChange
+		);
+	},
+	
 	// Remove listeners
 	detach: function(){
 		if (__ActiveMooToolsKnobCtrl__){
-			if (__ActiveMooToolsKnobCtrl__.monitorTimer)
-				clearInterval( __ActiveMooToolsKnobCtrl__.monitorTimer );
-			
 			if (__ActiveMooToolsKnobCtrl__.monitor) 
-				__ActiveMooToolsKnobCtrl__.monitor.removeEvent(
-					'change', __ActiveMooToolsKnobCtrl__.monitorValueChange
-				);
-
+				__ActiveMooToolsKnobCtrl__.teardownMonitor();
 			
 			__ActiveMooToolsKnobCtrl__.element.removeEvents({
 				focus:		__ActiveMooToolsKnobCtrl__.focus,
@@ -234,7 +258,6 @@ var Knob = new Class({
 		$('degrees').set('text', degrees);
 		$('value').set('text', stepPerDegree +' ... '+ self.value);
 		*/
-		
 		self.render();
 	},
 	
@@ -248,8 +271,7 @@ var Knob = new Class({
 	monitorValueChange: function(e){
 		if ( this.monitor ){
 			var v = parseFloat( this.monitor.get('value') );
-			if (v != this.monitorOldValue){
-				this.monitorOldValue = v;
+			if (v != this.value){
 				this.value = v;
 				this.render();
 			}
@@ -386,6 +408,12 @@ var Knob = new Class({
 // Sets this.degrees, and element's aria-valuenow/-valuetext.
 // If a parameter is supplied, it sets this.value
 	render: function(v){
+		if (! this.allowRender) return; 
+		
+		// Cancel timer
+		if (this.onCompleteTimer)
+			clearTimeout( this.onCompleteTimer );
+
 		if (typeof v != 'undefined') this.value = parseFloat( v );
 
 		if (isNaN(this.value)) this.value = 
@@ -403,9 +431,12 @@ var Knob = new Class({
 		this.element.set('title', this.value);
 		
 		if ( this.monitor ){
+			// Prevent calling of this render() method
+			this.allowRender = false;
 			this.monitor.set('value', this.value);
 			this.monitor.set('aria-valuenow', this.value);
 			this.monitor.set('aria-valuetext', this.value);
+			this.allowRender = true;
 		}
 
 		this.element.set('aria-valuenow', this.value);
@@ -423,6 +454,12 @@ var Knob = new Class({
 			'-o-transform': 		 'rotate(' + this.degrees + 'deg)',
 			'-moz-transform': 	 'rotate(' + this.degrees + 'deg)'
 		});
+
+		// Fire an event after render has been inactive for n milliseconds
+		// - MT failed to satisfy
+		if (! this.initialising) {
+			this.onCompleteTimer = this.$events['complete'][0].delay(this.options.completedelay, this);
+		}
 	}
 });
 
@@ -439,13 +476,20 @@ var Knob = new Class({
 Knob.parseDOM = function( selector ){
 	selector = selector || '.mooknob';
 	$$(selector).each( function(el){
-		var opts = {
-			element:	 el,
-		};
+		var opts = { element: el };
+		
 		Object.keys(el.dataset).each( function(i){
+			// Change keys of events to work with MT auto-event detection
+			var keyToSet = i.replace(
+				/^on([a-z])(.*)$/, 
+				function(m, initial, remainder){
+					return 'on' + initial.toUpperCase() + remainder;
+				}
+			) || i;
+			
 			// Rough casting 
 			try { 
-				opts[i] = eval( el.dataset[i] )
+				opts[keyToSet] = eval( el.dataset[i] );
 			}
 			catch(e) {
 				// String literals
@@ -454,7 +498,8 @@ Knob.parseDOM = function( selector ){
 				} 
 				// Real issues
 				else {
-					console.log('Error setting '+i+' from dataset');
+					console.log('Error setting '+keyToSet+' from dataset');
+					console.log(el.dataset[i]);
 					console.error(e);
 				}
 			}
@@ -471,6 +516,7 @@ Knob.parseDOM = function( selector ){
 			else 
 				opts.range = [min,max];
 		}
+		
 		opts.value = el.get('value') || el.dataset.value || 0;
 		
 		new Knob(opts);

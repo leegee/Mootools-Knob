@@ -180,6 +180,46 @@
 		</p>
 	</section>
 	
+
+	<section>
+		<h2>HTML onComplete Callback</h2>
+		<xmp>
+			<span id='knob-js95'
+				class='mooknob rotary2'
+				style='background:steelblue; margin-left:20px'
+				data-monitor='knob-js95-value'
+				aria-valuemin=-100
+				aria-valuemax=100
+				data-value=0
+				data-forceint=1
+				data-oncomplete='
+					(function(){
+						alert("My value is "+this.value)
+					})
+				'></span>
+			&mdash; Value 
+			<input type='text' value='' id='knob-js95-value'></span>
+		</xmp>
+		<p>The result:
+			<span id='knob-js95'
+				class='mooknob rotary2'
+				style='background:steelblue; margin-left:20px'
+				data-monitor='knob-js95-value'
+				aria-valuemin=-100
+				aria-valuemax=100
+				data-value=0
+				data-forceint=1
+				data-oncomplete='
+					(function(){
+						alert("My value is "+this.value)
+					})
+				'></span>
+			&mdash; Value 
+			<input type='text' value='' id='knob-js95-value'></span>
+		</p>
+	</section>	
+	
+	
 	<section>
 		<h2>Inline Graphics</h2>
 		<p>

@@ -123,15 +123,25 @@ The following options are available. Some may be supplied as
 * `addpointer`: (*↑*) By default the module (since 0.3) replaces `element`'s content with  an up-arrow to the element. Disable this by setting this option to null or false.
 * `forceint`:	(*false*) Force all values to be integers
 * `degreesoffset`: (*0*) Offset, in degrees, to apply to the rotation of the knob. This does not effect the value of the control, only its appearance, and can change the style of the control form a pan control to a volume control, for example. The default is *0* but this may change.
+`completedelay`: (*500*) Number of milliseconds to wait for inactivity before firing the `onComplete` event.
 
 Events
 ------
 
-In addition to the above options, the following events are supplied:
+In addition to the above options, the following events are supported: 
 
 * `onMousedown`: fired when the knob is clicked
 * `onMouseup`: fired when the knob is released but before it is rendered
+* `onComplete`: fired when no changes have taken place for the number milliseconds defined in the `completedelay` option.
 * `onTick`: fired as the knob is turned
+
+The options may be passed as HTML dataset attributes by prepending `data-`,
+though you will need to consider that supplied code will be evaluated when
+parsed from the DOM, so will need something like this:
+
+    (function(){
+        alert("My value is "+this.value)
+    })
 
 The `onTick` event is intended to allow the user to adjust the behaviour 
 of the widget, and to allow this widget to affect other objects,
