@@ -26,6 +26,17 @@
 	</script>
 	
 	<style>
+	section { 
+		border: 1px solid gray;
+		margin-bottom: 1em;
+		padding: 1em;
+	}
+	
+	xmp {
+		background: #ddd;
+		border: 1px solid #aaa;
+	}
+	
 	.rotary,
 	.rotary2  {
 		outline: 0;
@@ -103,7 +114,7 @@
 				background: silver;
 				text-align: center;
 				border-radius: 50%;
-				font-size:28pt;
+				font-size:25pt;
 				width: 32pt;
 				height: 32pt;
 		'>⇪</span>
@@ -225,37 +236,105 @@
 		Added <code>degreesoffset=180</code>, so that the pointer is initially pointing
 		downwards.
 		</p>
+		<p>
 		<xmp>
-		<div style='position:absolute'>
-			<span id='bg' style='position:absolute;top:0;background:url(knob_bg_164x165.png); width:164px; height:165px'></span>
-			<span class='mooknob' id='fg'
-			data-addpointer='false'
-			data-degreesoffset='180'
-			data-scale='0.1'
-			data-value='0'
-			aria-valuemin='0'
-			aria-valuemax='10'
-			style='position:absolute;top:0;left:0;background:url(knob_fg_164x165.png); width:164px; height:165px'></span>
+		<div style='position:relative; height:200px'>
+			<span id='bg1' 
+			style='position:absolute;top:0;background:url(knob_bg_164x165.png); width:164px; height:165px'></span>
+			<span class='mooknob' id='fg1'
+				data-addpointer='false'
+				data-degreesoffset='180'
+				data-scale='0.1'
+				data-value='0'
+				aria-valuemin='0'
+				aria-valuemax='10'
+				style='position:absolute;top:0;left:0;background:url(knob_fg_164x165.png); width:164px; height:165px'>
+			</span>
 		</div>
 		</xmp>
-		<p style='position:absolute'>
-		Result:
-			<span id='bg' style=' position:absolute;top:0;left:200px;background:url(knob_bg_164x165.png); width:164px; height:165px'></span>
-			<span class='mooknob' data-addpointer='false' 
-			data-scale='0.01'
-			data-value='0'
-			data-monitor='volume'
-			aria-valuemin='0'
-			aria-valuemax='10'
-			data-degreesoffset='180'
-			id='fg' style='outline: 0;position:absolute;top:0;left:200px;background:url(knob_fg_164x165.png); width:164px; height:165px'></span>
-			
-			<input type='text' id='volume'
-			style='position:absolute; left: 400px; width:4em'
-			/>
 		</p>
+		
+		<p>Result:</p>
+		<div style='position:relative; height:200px'>
+			<span id='bg2' style=' position:absolute;top:0;left:200px;background:url(knob_bg_164x165.png); width:164px; height:165px'></span>
+			<span class='mooknob' 
+				data-addpointer='false' 
+				data-scale='0.01'
+				data-value='0'
+				data-monitor='volume'
+				aria-valuemin='0'
+				aria-valuemax='10'
+				data-degreesoffset='180'
+				id='fg2' 
+				style='outline: 0;position:absolute;top:0;left:200px;background:url(knob_fg_164x165.png); width:164px; height:165px'>
+			</span>
+			<input type='text' id='volume'
+				style='position:absolute; left: 400px; width:4em'
+			/>
+		</div>
 	</section>	
 
-    	</body>
+	<section>
+		<h2>Another</h2>
+		<p>Result:</p>
+		<div style='position:relative; height:200px'>
+			<span id='bg3' style=' position:absolute;
+				top:0; left:200px;
+				width:120px; height:120px;
+				background:url(knob_bg_120x120.png);
+			'></span>
+			<span class='mooknob' 
+				id='fg3' 
+				data-scale='0.01'
+				data-value='0'
+				data-addpointer='false' 
+				data-monitor='volume2'
+				aria-valuemin='0'
+				aria-valuemax='10'
+				data-degreesoffset='0'
+				style='outline: 0; 
+					position:absolute; 
+					top:0; left:195px;
+					width:130px; height:130px;
+					background-color:transparent;
+				'>
+					<input type='text' 
+						id='volume2'
+						style='width:3em; border:0; font-weight:bold; background: transparent; font-size: 16px;'
+					/>
+				</span>
+		</div>
+	</section>
+
+	<section>
+		<h2>Background image and default pointer</h2>
+		<p>Result:</p>
+		<div style='position:relative; height:200px'>
+			<span class='mooknob' 
+				id='item5' 
+				data-scale='0.01'
+				data-value='0'
+				data-monitor='volume5'
+				aria-valuemin='0'
+				aria-valuemax='10'
+				data-degreesoffset='0'
+				style='outline: 0; 
+					position:absolute; 
+					top:0; left:200px;
+					width:120px; height:120px;
+					background:url(knob_bg_120x120.png);
+					font-size: 62px;
+					text-align:center;
+					font-weight: 900;
+				'>
+				</span>
+				<input type='text' 
+					id='volume5'
+					style='width:3em; border:0; font-weight:bold; background: transparent; font-size: 16px;'
+				/>
+		</div>
+	</section>
+	
+	</body>
 </html>
 	
