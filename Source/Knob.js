@@ -33,9 +33,9 @@ provides: [Knob]
 //	Provides events:
 //	
 //		onMousedown - when the knob is clicked
-//		onTick - every time the knob turns
+//		onTick - every time the knob turns, prior to rendering
 //		onMouseup - when the knob is released
-
+//		onComplete - when control has been left for n milliseconds
 
 // ## Disgusting global variable
 // Thhis horrible global variable seems to be necessary 
@@ -80,7 +80,7 @@ var Knob = new Class({
 		// Fired when the main mouse button is depressed, but after processing
 		onMousedown: 	function(){},
 		// Fired when the main mouse button is released, but after processing
-		onmouseup:		function(){},
+		onMouseup:		function(){},
 		// Fired when movement is complete, after `options.completedelay` milliseconds
 		onComplete:		function(){}
 	},
